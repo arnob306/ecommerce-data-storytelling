@@ -33,6 +33,9 @@ Thumbs.db
 .coverage
 htmlcov/
 
+# Runtime logs
+logs/
+
 # Note: We're committing the CSV for portfolio purposes
 # data/raw/*.csv
 data/processed/

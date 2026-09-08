@@ -80,7 +80,7 @@ def precompute_all():
         size_kb = f.stat().st_size / 1024
         print(f'  {f.name:<40} {size_kb:.1f} KB')
     print('\nRun the dashboard with:')
-    print('  streamlit run src/platform/dashboard.py')
+    print('  streamlit run src/platforms/dashboard.py')
 
 
 if __name__ == '__main__':

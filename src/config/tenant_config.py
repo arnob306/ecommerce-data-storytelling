@@ -27,6 +27,7 @@ Design decision:
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Optional
+import re
 import yaml
 import logging
 
@@ -35,6 +36,10 @@ logger = logging.getLogger(__name__)
 # Default single-tenant base paths (current structure)
 DEFAULT_DATA_ROOT = Path('data')
 DEFAULT_CONFIG_ROOT = Path('config')
+
+# tenant_id is used directly in filesystem paths and Chroma collection names,
+# so it must be a safe bareword — no path separators or traversal sequences.
+_TENANT_ID_RE = re.compile(r'^[A-Za-z0-9_-]+$')
 
 
 @dataclass
@@ -52,6 +57,11 @@ class TenantConfig:
     def __post_init__(self):
         self.data_root = Path(self.data_root)
         self.config_root = Path(self.config_root)
+        if self.tenant_id is not None and not _TENANT_ID_RE.match(self.tenant_id):
+            raise ValueError(
+                f"Invalid tenant_id: {self.tenant_id!r}. "
+                "Must contain only letters, digits, underscores, and hyphens."
+            )
 
     @property
     def is_multi_tenant(self) -> bool:

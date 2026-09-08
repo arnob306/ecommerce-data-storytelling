@@ -204,7 +204,11 @@ class AnomalyRetriever:
         kpi_name: str,
         exclude_date: str,
         n: int = 3,
-        same_kpi_only: bool = False
+        same_kpi_only: bool = False,
+        severity: Optional[str] = None,
+        direction: Optional[str] = None,
+        deviation_pct: Optional[float] = None,
+        max_distance: Optional[float] = 0.6
     ) -> list[dict]:
         """
         Retrieve the n most similar past anomalies to a given KPI + date.
@@ -218,6 +222,15 @@ class AnomalyRetriever:
                            Default False - cross-KPI retrieval often surfaces
                            useful context (e.g. revenue and order count spikes
                            on the same date)
+            severity, direction, deviation_pct: characteristics of the current
+                           anomaly. Folded into the query text so the search
+                           is anchored to this anomaly's actual profile rather
+                           than a near-constant per-KPI string, which otherwise
+                           makes "most similar" mostly a function of incidental
+                           text in the stored documents.
+            max_distance: results with cosine distance above this are dropped
+                          rather than surfaced as if they were meaningfully
+                          similar. None disables the cutoff.
 
         Returns:
             List of dicts with keys: document, kpi_name, date, severity, distance
@@ -226,10 +239,18 @@ class AnomalyRetriever:
             logger.warning('Vector store is empty. Run build() first.')
             return []
 
-        # Build a query document using the same format as the stored documents
-        # We query by KPI name and direction to seed the similarity search
+        # Build a query document using the same format as the stored documents.
+        # Anchoring on severity/direction/magnitude (not just KPI name) means
+        # different anomalies on the same KPI produce different query
+        # embeddings, so "most similar" reflects the actual anomaly profile.
         kpi_display = KPI_DISPLAY_NAMES.get(kpi_name, kpi_name)
-        query_text = f"KPI: {kpi_display}. Anomaly detected."
+        query_text = f"KPI: {kpi_display}."
+        if severity:
+            query_text += f" Severity: {severity}."
+        if deviation_pct is not None and direction:
+            query_text += f" The metric was {deviation_pct:.1f}% {direction} expected."
+        if query_text == f"KPI: {kpi_display}.":
+            query_text += " Anomaly detected."
 
         # Retrieve more than needed so we can filter the excluded date
         where_filter = None
@@ -242,12 +263,15 @@ class AnomalyRetriever:
             where=where_filter
         )
 
-        # Filter out the current anomaly date and format results
+        # Filter out the current anomaly date, drop weak matches, and format results
         similar = []
         exclude_key = f"{kpi_name}_{pd.Timestamp(exclude_date).strftime('%Y-%m-%d')}"
 
         for i, doc_id in enumerate(results['ids'][0]):
             if doc_id == exclude_key:
+                continue
+            distance = results['distances'][0][i]
+            if max_distance is not None and distance > max_distance:
                 continue
             if len(similar) >= n:
                 break
@@ -258,7 +282,7 @@ class AnomalyRetriever:
                 'kpi_name': results['metadatas'][0][i]['kpi_name'],
                 'date': results['metadatas'][0][i]['date'],
                 'severity': results['metadatas'][0][i]['severity'],
-                'distance': round(results['distances'][0][i], 4)
+                'distance': round(distance, 4)
             })
 
         return similar

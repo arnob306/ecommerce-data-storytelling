@@ -59,7 +59,8 @@ CREATE TABLE IF NOT EXISTS root_causes (
     segment_value       TEXT,                       
     contribution_pct    NUMERIC(10, 4),
     segment_rank        INTEGER,
-    analysed_at         TIMESTAMP       NOT NULL DEFAULT NOW()
+    analysed_at         TIMESTAMP       NOT NULL DEFAULT NOW(),
+    UNIQUE (anomaly_id, segment_rank)
 );
 
 CREATE INDEX IF NOT EXISTS idx_root_causes_anomaly_id   ON root_causes (anomaly_id);

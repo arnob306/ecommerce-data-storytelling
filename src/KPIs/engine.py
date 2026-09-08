@@ -26,7 +26,7 @@ class KPIEngine:
         self.registry = KPIRegistry(config_path)
         self.results = {}
     
-    def calculate_kpi(self, kpi_name: str, df: pd.DataFrame, calculated_kpis: dict = None) -> Optional[float]:
+    def calculate_kpi(self, kpi_name: str, df: pd.DataFrame, calculated_kpis: Optional[Dict[str, float]] = None) -> Optional[float]:
         """Calculate a single KPI."""
         formula = self.registry.get_formula(kpi_name)
         

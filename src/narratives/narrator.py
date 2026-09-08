@@ -39,7 +39,7 @@ NARRATIVES_PATH = Path('data/insights/narratives.json')
 CACHE_DIR = Path('data/cache')
 PROMPTS_CONFIG = Path('config/prompts.yaml')
 
-MODEL = 'llama-3.1-8b-instant'
+MODEL = 'allam-2-7b'
 
 KPI_DISPLAY_NAMES = {
     'total_revenue': 'Total Revenue',
@@ -176,7 +176,7 @@ def run_narrator(force_regenerate: bool = False):
         print('  GROQ_API_KEY=your_key_here')
         return
 
-    client = Groq(api_key=api_key)
+    client = Groq(api_key=api_key, timeout=30.0, max_retries=2)
     monitor = LLMMonitor()
     prompt_config = load_prompt_config()
     prompt_version = prompt_config.get('id', 'v1')

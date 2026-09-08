@@ -47,7 +47,6 @@ import pandas as pd
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 
 from src.narratives.monitor import LLMMonitor
 from src.narratives.retriever import AnomalyRetriever
@@ -57,7 +56,7 @@ logger = logging.getLogger(__name__)
 
 RAG_NARRATIVES_PATH = Path('data/insights/rag_narratives.json')
 CACHE_DIR = Path('data/cache')
-MODEL = 'llama-3.1-8b-instant'
+MODEL = 'allam-2-7b'
 
 KPI_DISPLAY_NAMES = {
     'total_revenue': 'Total Revenue',
@@ -100,13 +99,14 @@ Write in third person past tense.
 
 def build_rag_chain(llm: ChatGroq):
     """
-    Build a LangChain LCEL chain: prompt | llm | output_parser.
+    Build a LangChain LCEL chain: prompt | llm.
 
-    LCEL (LangChain Expression Language) pipe syntax is the current
-    LangChain standard. Each component is composable and the chain
-    can be extended with additional steps (e.g. memory, guardrails).
+    Deliberately stops at the raw AIMessage rather than piping through
+    StrOutputParser - the message's response metadata carries the real
+    token usage, which is needed for accurate cost/observability tracking
+    and would otherwise be lost once the message is reduced to a string.
     """
-    return RAG_PROMPT_TEMPLATE | llm | StrOutputParser()
+    return RAG_PROMPT_TEMPLATE | llm
 
 
 def build_prompt_inputs(row: pd.Series, context: str) -> dict:
@@ -164,6 +164,8 @@ def run_rag_narrator(force_regenerate: bool = False):
         model=MODEL,
         temperature=0.3,
         max_tokens=200,
+        timeout=30,
+        max_retries=2,
     )
 
     # Build LangChain LCEL chain
@@ -210,12 +212,16 @@ def run_rag_narrator(force_regenerate: bool = False):
             continue
 
         try:
-            # Step 1: Retrieve similar historical anomalies
+            # Step 1: Retrieve similar historical anomalies, anchored to this
+            # anomaly's own severity/direction/magnitude (not just its KPI)
             similar = retriever.retrieve(
                 kpi_name=row['kpi_name'],
                 exclude_date=str(row['date']),
                 n=3,
-                same_kpi_only=True
+                same_kpi_only=True,
+                severity=row.get('anomaly_severity'),
+                direction='above' if row.get('total_deviation', 0) > 0 else 'below',
+                deviation_pct=abs(row.get('total_deviation_pct', 0))
             )
             context = retriever.format_context(similar)
 
@@ -229,9 +235,12 @@ def run_rag_narrator(force_regenerate: bool = False):
                 kpi_name=row['kpi_name'],
                 anomaly_date=str(row['date'])
             ) as call:
-                # LangChain LCEL chain invocation
-                output_text = chain.invoke(prompt_inputs)
-                monitor.record_response(call, _mock_usage(output_text), output_text)
+                # LangChain LCEL chain invocation - keep the raw AIMessage
+                # (rather than piping through StrOutputParser) so real token
+                # usage can be read from its response metadata.
+                ai_message = chain.invoke(prompt_inputs)
+                output_text = ai_message.content
+                monitor.record_response(call, _usage_from_message(ai_message), output_text)
 
             narratives[key] = {
                 'kpi_name': row['kpi_name'],
@@ -270,20 +279,38 @@ def run_rag_narrator(force_regenerate: bool = False):
     monitor.print_summary()
 
 
-def _mock_usage(output_text: str):
+def _usage_from_message(message) -> object:
     """
-    LangChain LCEL chains don't return a usage object directly.
-    Return a minimal mock so monitor.record_response doesn't error.
-    Token counts won't be populated - this is a known LangChain limitation
-    when using the pipe syntax without streaming.
+    Extract real token usage from a LangChain AIMessage and wrap it in the
+    Groq-style `response.usage.*` shape that monitor.record_response expects.
+
+    ChatGroq populates both `usage_metadata` (LangChain's standardised field)
+    and `response_metadata['token_usage']` (the raw Groq/OpenAI-style dict);
+    either can be present depending on langchain-groq version, so both are
+    checked.
     """
-    class MockUsage:
-        prompt_tokens = 0
-        completion_tokens = 0
-        total_tokens = 0
-    class MockResponse:
-        usage = MockUsage()
-    return MockResponse()
+    usage_metadata = getattr(message, 'usage_metadata', None) or {}
+    token_usage = getattr(message, 'response_metadata', {}).get('token_usage', {}) or {}
+
+    prompt_tokens = usage_metadata.get('input_tokens', token_usage.get('prompt_tokens', 0))
+    completion_tokens = usage_metadata.get('output_tokens', token_usage.get('completion_tokens', 0))
+    total_tokens = usage_metadata.get(
+        'total_tokens', token_usage.get('total_tokens', prompt_tokens + completion_tokens)
+    )
+
+    class Usage:
+        pass
+    class Response:
+        pass
+
+    usage = Usage()
+    usage.prompt_tokens = prompt_tokens
+    usage.completion_tokens = completion_tokens
+    usage.total_tokens = total_tokens
+
+    response = Response()
+    response.usage = usage
+    return response
 
 
 def load_rag_narratives() -> dict:

@@ -411,7 +411,7 @@ class RootCauseAnalyser:
         # Filter to point anomalies only - skip pure trend detections
         point_anomalies = [
             a for a in anomalies
-            if 'mann_kendall' not in a.method or '_and_' in a.method
+            if 'mann_kendall' not in a.method
         ]
         trend_only = [
             a for a in anomalies

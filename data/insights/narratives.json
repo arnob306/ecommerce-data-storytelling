@@ -3,152 +3,152 @@
     "kpi_name": "active_customers",
     "date": "2010-12-26 00:00:00",
     "severity": "low",
-    "narrative": "On December 26, 2010, the number of active customers was significantly lower than expected, with the UK-based customers being the main driver of this decline, particularly those who shopped during the 3 pm and 10 am hours. This anomaly likely indicates that the e-commerce retail business experienced a slower than usual day, possibly due to holiday-related factors, and may require further investigation to understand the underlying causes and potential impact on future sales.",
+    "narrative": "On December 26, 2010, we noticed an unusual decrease in active customers. The number of active customers was 60.3% lower than expected, with the majority of this difference being driven by customers in the United Kingdom (13.9% of deviation). This event most likely indicates a temporary dip in sales or engagement, impacting both domestic and international customers during late afternoon (15.0% of deviation) and early evening (10.0% of deviation).",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:08.249955"
+    "generated_at": "2026-09-08T19:19:20.026202"
   },
   "total_revenue_2011-09-25": {
     "kpi_name": "total_revenue",
     "date": "2011-09-25 00:00:00",
     "severity": "low",
-    "narrative": "On September 25, 2011, the UK e-commerce retail experienced a significant spike in revenue, primarily driven by sales from customers in the United Kingdom during the 11am hour. This anomaly likely indicates a strong marketing campaign or special promotion that resonated with UK customers during this time, and the business may want to consider replicating this success in future marketing efforts.",
+    "narrative": "On September 25th, 2011, we observed an unusual increase in total revenue for the UK e-commerce retail data. The metric experienced a low severity anomaly, with Country=United Kingdom contributing 52.9% of the deviation and HourOfDay=11.0 and 10.0 accounting for 27.8% and 18.3% respectively. This event likely indicates a temporary spike in online sales during those specific hours in the UK, possibly due to a promotional event or unexpected popularity.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:08.440573"
+    "generated_at": "2026-09-08T19:19:20.409544"
   },
   "units_sold_2011-09-25": {
     "kpi_name": "units_sold",
     "date": "2011-09-25 00:00:00",
     "severity": "low",
-    "narrative": "On September 25, 2011, there was a significant spike in units sold, with the majority of the increase coming from customers in the United Kingdom who made purchases during the 11:00 hour. This anomaly likely indicates that the business experienced a strong online sales event or promotion during this time, possibly a one-day sale or a special offer that resonated with UK customers.",
+    "narrative": "On September 25th, 2011, there was an unusual spike in the number of units sold for a UK-based e-commerce retailer. The majority of this anomaly can be attributed to sales in the United Kingdom (42.1% of the deviation) and specifically, sales during the hours of 11 AM and 10 AM (combined 62.2% of the deviation). \n\nThis event likely indicates a temporary surge in UK-based customer interest or activity, which could have been influenced by specific promotions, campaigns, or events during those hours. The business should investigate if this anomaly had a significant impact on revenue or customer behavior and consider using predictive analytics to proactively mitigate similar unexpected spikes in the future.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:08.633900"
+    "generated_at": "2026-09-08T19:19:20.825097"
   },
   "units_sold_2011-10-09": {
     "kpi_name": "units_sold",
     "date": "2011-10-09 00:00:00",
     "severity": "low",
-    "narrative": "On October 9, 2011, the UK e-commerce retail experienced a significant spike in units sold, primarily driven by customers in the United Kingdom who placed orders during the 10:00 and 12:00 hour. This anomaly likely indicates a strong sales performance during this period, possibly due to a promotional event or a popular product launch that resonated with UK customers.",
+    "narrative": "On October 9th, 2011, we noticed that the number of units sold in the UK e-commerce retail data experienced an unusual surge. The majority of this anomaly can be attributed to sales in the United Kingdom, with additional contributions from the hours of 10 AM and 12 PM. This event likely indicates a temporary spike in popularity or promotional activity specific to the UK market during those time slots.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:08.819617"
+    "generated_at": "2026-09-08T19:19:21.187369"
   },
   "active_customers_2011-11-13": {
     "kpi_name": "active_customers",
     "date": "2011-11-13 00:00:00",
     "severity": "medium",
-    "narrative": "On November 13, 2011, there was a significant spike in active customers, primarily driven by sales in the United Kingdom, particularly for a specific stock code (23084.0), and during the 12 o'clock hour. This anomaly likely indicates a successful marketing campaign or promotion in the UK, possibly targeting customers who purchased stock code 23084.0, which could be a valuable opportunity for the business to replicate its success.",
+    "narrative": "On November 13th, 2011, we noticed an unusual increase in active customers. The majority of this anomaly can be attributed to the United Kingdom market (143.3% above expectation) and the StockCode 23084.0 product (30.1% above expectation). This event likely indicates a temporary surge in interest for that specific product in the UK, which could have been influenced by various factors like a promotional campaign or a popular media mention.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:09.042664"
+    "generated_at": "2026-09-08T19:19:21.571978"
   },
   "order_count_2011-11-13": {
     "kpi_name": "order_count",
     "date": "2011-11-13 00:00:00",
     "severity": "low",
-    "narrative": "On November 13, 2011, there was a significant spike in order count for a specific product, driven mainly by customers in the United Kingdom, who purchased StockCode 23084.0 and StockCode 22086.0.\n\nThis anomaly likely indicates a strong demand for these products among UK customers, suggesting that the business may have an opportunity to capitalize on this trend by increasing inventory or promotions for these items.",
+    "narrative": "On November 13, 2011, there was an unusual increase in the number of orders for UK-based customers. The segment driving this anomaly the most was StockCode 23084.0, followed by StockCode 22086.0 and Country United Kingdom. This likely indicates a temporary spike in popularity of those specific products among UK customers, which may have benefited the business by boosting sales for those items.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:09.246248"
+    "generated_at": "2026-09-08T19:19:21.938455"
   },
   "total_revenue_2011-11-13": {
     "kpi_name": "total_revenue",
     "date": "2011-11-13 00:00:00",
     "severity": "medium",
-    "narrative": "On November 13, 2011, the e-commerce retail business experienced an unusual spike in total revenue, with the majority of this increase coming from customers in the United Kingdom who made purchases during the 5 pm hour. This anomaly likely indicates that the business was successful in promoting a popular product or offering a limited-time discount that resonated with UK customers during the late afternoon, and it may be worth exploring ways to replicate this success in the future.",
+    "narrative": "On November 13th, 2011, there was an unusual spike in UK e-commerce revenue. The majority of the anomaly can be attributed to customers in the United Kingdom making significantly more purchases during the late afternoon hour of 17:00 (47.7%) and the early evening hour of 10:00 (34.4%). It is likely that this event had a notable impact on the business, as unexpected spikes in UK sales could indicate marketing effectiveness, seasonal trends, or holiday-related activities.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:09.482758"
+    "generated_at": "2026-09-08T19:19:22.318518"
   },
   "units_sold_2011-11-13": {
     "kpi_name": "units_sold",
     "date": "2011-11-13 00:00:00",
     "severity": "medium",
-    "narrative": "On November 13, 2011, the UK e-commerce retail business experienced an unusual spike in sales, with the majority of this increase coming from customers based in the United Kingdom. This anomaly likely indicates that the business's online sales strategy is resonating with UK customers, suggesting an opportunity to further tailor marketing efforts to this key demographic.",
+    "narrative": "On November 13th, 2011, we observed an unusual spike in the number of units sold for the UK e-commerce retail data. The sales exceeded expectations by 104.1%, with the majority of this deviation coming from within the United Kingdom market (64.0%) during the 5pm hour (17.0%) and the 10pm hour (9.6%). \n\nThis event likely indicates a potential surge in sales due to a promotional event or unexpected popularity in certain products within the UK. The business should investigate these specific segments to understand the cause and capitalize on the increased demand, potentially leading to enhanced marketing strategies or product offerings tailored to these customer groups.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:09.668646"
+    "generated_at": "2026-09-08T19:19:22.747443"
   },
   "active_customers_2011-11-20": {
     "kpi_name": "active_customers",
     "date": "2011-11-20 00:00:00",
     "severity": "high",
-    "narrative": "On November 20, 2011, there was a significant spike in active customers, primarily driven by a large increase in customers from the United Kingdom, who were shopping for a specific product, StockCode 23084.0, during the 1 o'clock hour.\n\nThis anomaly likely indicates a successful marketing campaign or promotion that resonated with UK customers, resulting in a surge in sales for this particular product, which could be a valuable opportunity for the business to capitalize on.",
+    "narrative": "On November 20th, 2011, we observed a significant increase in active customers with the UK segment experiencing the highest impact. The country segment accounted for 126.1% of the deviation, while the StockCode 23084.0 and HourOfDay 13.0 contributed 28.9% and 20.5%, respectively. This sudden surge in active customers likely indicates potential marketing effectiveness or seasonal trends specific to these segments, warranting further investigation and strategic adjustments.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:09.901161"
+    "generated_at": "2026-09-08T19:19:23.130254"
   },
   "order_count_2011-11-20": {
     "kpi_name": "order_count",
     "date": "2011-11-20 00:00:00",
     "severity": "high",
-    "narrative": "On November 20, 2011, there was an unusually high number of orders, primarily driven by customers in the United Kingdom who purchased StockCode 23084.0 and StockCode 22086.0.\n\nThis anomaly likely indicates a strong demand for these specific products, suggesting that the business should consider increasing inventory levels or offering promotions to capitalize on this trend.",
+    "narrative": "On November 20th, 2011, there was an unusual spike in the number of orders for our UK e-commerce retail business. The majority of this anomaly can be attributed to orders from the United Kingdom (56.9% contribution), specifically StockCodes 23084.0 and 22086.0, which together accounted for 71.1% of the deviation. This event likely indicates a temporary surge in popularity or demand for these specific products in the UK, which could have positively affected sales during that period.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:10.075555"
+    "generated_at": "2026-09-08T19:19:23.518264"
   },
   "total_revenue_2011-11-20": {
     "kpi_name": "total_revenue",
     "date": "2011-11-20 00:00:00",
     "severity": "high",
-    "narrative": "On November 20, 2011, the company's total revenue was unusually high, with the majority of the increase coming from customers in the United Kingdom who made purchases during the 5 o'clock hour.\n\nThis anomaly likely indicates a successful marketing campaign or special promotion that targeted UK customers during this time, and the business may want to consider repeating or building on this strategy to drive future sales.",
+    "narrative": "On November 20th, 2011, there was an unusual spike in the UK e-commerce retail data. The total revenue was 136.9% higher than expected, with a significant contribution coming from sales in the United Kingdom (65.1%) during the 5pm hour (17.0%) and 4pm hour (15.0%). This event likely indicates a sudden surge in UK-based customers purchasing early in the evening, potentially due to a promotion or limited-time offer.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:10.277834"
+    "generated_at": "2026-09-08T19:19:23.896849"
   },
   "units_sold_2011-11-20": {
     "kpi_name": "units_sold",
     "date": "2011-11-20 00:00:00",
     "severity": "medium",
-    "narrative": "On November 20, 2011, a significant increase in units sold was observed, with the majority of this surge coming from customers in the United Kingdom, particularly during the 5 o'clock and 3 o'clock hour slots. This anomaly likely indicates a successful marketing campaign or promotion that targeted UK customers during these specific hours, resulting in a substantial boost in sales.",
+    "narrative": "On November 20th, 2011, we noticed that the number of units sold in the UK e-commerce retail data experienced a significant increase. The segment driving this anomaly primarily consisted of sales in the United Kingdom, specifically during the hours of 5pm and 6pm. It is likely that this event had a moderate impact on the business, as higher-than-expected sales in these specific dimensions may have been caused by promotions, seasonality, or other factors that attracted more customers in those hours, leading to a temporary boost in revenue.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:10.468548"
+    "generated_at": "2026-09-08T19:19:24.284057"
   },
   "active_customers_2011-11-27": {
     "kpi_name": "active_customers",
     "date": "2011-11-27 00:00:00",
     "severity": "low",
-    "narrative": "On November 27, 2011, there was an unusual spike in active customers, primarily driven by a significant increase in sales from customers in the United Kingdom, particularly those purchasing specific stock codes 23084.0 and 22086.0. This likely means that the business experienced a temporary surge in demand for these products among UK customers, which may have been due to a promotional event, holiday season, or other external factors that can be leveraged for future marketing strategies.",
+    "narrative": "On November 27, 2011, there was an unusual increase in active customers with the UK segment experiencing the highest impact. Products StockCode 23084.0 and 22086.0 contributed significantly to this anomaly. It is likely that this event attracted more customers to specific products, potentially due to promotions or popularity, which benefited those particular stock items while overall active customers exceeded expectations by 69.8%.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:10.690288"
+    "generated_at": "2026-09-08T19:19:24.653385"
   },
   "order_count_2011-11-27": {
     "kpi_name": "order_count",
     "date": "2011-11-27 00:00:00",
     "severity": "low",
-    "narrative": "On November 27, 2011, there was an unusual spike in orders, primarily driven by customers in the United Kingdom who purchased StockCode 23084 and StockCode 22086. This anomaly likely indicates a strong demand for these specific products, suggesting that the business may have missed an opportunity to capitalize on a trend or that there was an external factor influencing sales, such as a promotion or event.",
+    "narrative": "On November 27, 2011, there was an unexpected surge in the number of orders for our UK e-commerce retail business. The majority of this anomaly can be attributed to orders from the United Kingdom (61.0%) and specifically, StockCodes 23084.0 and 22086.0 (combined 86.1% of deviation). \n\nThis unusual increase in order count likely indicates a temporary spike in customer interest or demand for specific products in the United Kingdom. The business should investigate these specific StockCodes further to understand the driving factors and ensure they continue to perform well, while also monitoring potential impacts on supply chain and profitability.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:10.890721"
+    "generated_at": "2026-09-08T19:19:25.064675"
   },
   "units_sold_2011-11-27": {
     "kpi_name": "units_sold",
     "date": "2011-11-27 00:00:00",
     "severity": "low",
-    "narrative": "On November 27, 2011, there was a significant spike in units sold, primarily driven by customers in the United Kingdom who made purchases during the 3 pm hour.\n\nThis anomaly likely indicates a successful marketing campaign or promotion targeting UK customers during this time, which may warrant further investigation and potential replication to boost sales.",
+    "narrative": "On November 27th, 2011, we observed an unusual spike in units sold for the UK e-commerce retail data. The majority of this anomaly can be attributed to sales in the United Kingdom (67.6% contribution), specifically during the hours of 5 PM (15.0% contribution) and 4 PM (12.1% contribution). This event likely indicates a temporary surge in online shopping activity in the UK, possibly due to promotions, events, or holidays, which may have a lasting impact on sales patterns or customer behavior.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:11.069611"
+    "generated_at": "2026-09-08T19:19:25.441512"
   },
   "active_customers_2011-12-04": {
     "kpi_name": "active_customers",
     "date": "2011-12-04 00:00:00",
     "severity": "high",
-    "narrative": "On December 4, 2011, there was a significant spike in active customers, primarily driven by a surge in activity from customers in the United Kingdom who were purchasing a specific product, StockCode 23084. This anomaly likely indicates a strong demand for that product, which could be a sign of a successful marketing campaign or a seasonal trend, and may warrant further investigation to capitalize on this opportunity.",
+    "narrative": "On December 4th, 2011, we observed a significant increase in active customers with the UK segment experiencing the highest deviation. The country of United Kingdom contributed 145% to this anomaly, followed by stock codes 23084 and 22086, contributing 30.1% and 22.7% respectively. This sudden surge in active customers likely indicates a boost in sales or growth for specific products, which the business should investigate further to understand the drivers and capitalize on the success.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:11.281205"
+    "generated_at": "2026-09-08T19:19:25.820269"
   },
   "order_count_2011-12-04": {
     "kpi_name": "order_count",
     "date": "2011-12-04 00:00:00",
     "severity": "medium",
-    "narrative": "On December 4, 2011, there was an unusual spike in order count, primarily driven by customers in the United Kingdom, who purchased a specific stock item, 23084.0. This likely indicates a successful marketing campaign or promotion targeting UK customers, which may warrant further investigation to understand its impact and potential replication in the future.",
+    "narrative": "On December 4th, 2011, there was an unusual spike in the number of orders for our UK e-commerce retail business. The majority of this anomaly can be attributed to orders from the United Kingdom (65.6% contribution) specifically related to StockCodes 23084.0 and 22086.0. This event likely indicates a temporary surge in popularity or demand for these specific products among UK customers.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:11.461747"
+    "generated_at": "2026-09-08T19:19:26.190054"
   },
   "total_revenue_2011-12-04": {
     "kpi_name": "total_revenue",
     "date": "2011-12-04 00:00:00",
     "severity": "low",
-    "narrative": "On December 4, 2011, the UK e-commerce retail experienced a significant surge in revenue, primarily driven by customers in the United Kingdom who made purchases during the 4 pm hour. This anomaly likely indicates a strong sales performance during the holiday season, possibly due to a successful marketing campaign or a one-time promotion that resonated with UK customers.",
+    "narrative": "On December 4th, 2011, we observed an unusual increase in total revenue for the UK e-commerce retail data. The majority of this deviation can be attributed to sales in the United Kingdom (73.8%) during the 4pm hour (16.0%) and 5pm hour (18.8%). \n\nThis unexpected surge in UK-based sales during late afternoon hours might indicate a marketing campaign's success or an unforeseen event impacting this segment. It could also suggest potential opportunities for expanding similar promotions or targeting similar customers in related products and markets.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:11.656926"
+    "generated_at": "2026-09-08T19:19:26.575198"
   },
   "units_sold_2011-12-11": {
     "kpi_name": "units_sold",
     "date": "2011-12-11 00:00:00",
     "severity": "low",
-    "narrative": "On December 11, 2011, a significant spike in sales occurred, with the majority of the increase coming from customers in the United Kingdom who made purchases at 12:00 PM. This likely indicates that the company's sales strategy for the holiday season was effective, particularly in targeting UK customers during peak hours, and may warrant further exploration to replicate this success in future years.",
+    "narrative": "On December 11th, 2011, we observed an unusual spike in the number of units sold for the UK e-commerce retail data. The majority of this anomaly can be attributed to sales in the United Kingdom (81.6% of the deviation), particularly during the hours of 12 PM and 3 PM (combined 17.4% and 10.3% of the deviation, respectively). \n\nThis unexpected surge in sales for UK-based customers and during specific time slots might suggest seasonal trends, marketing campaigns, or promotions that resonated strongly with this audience. The business should investigate these events to understand the drivers behind the increase in sales and capitalize on such opportunities in the future.",
     "prompt_version": "v2",
-    "generated_at": "2026-03-08T23:36:11.876418"
+    "generated_at": "2026-09-08T19:19:26.984884"
   }
 }

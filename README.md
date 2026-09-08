@@ -14,8 +14,8 @@ This project analyses real UK retail transaction data to automatically:
 
 ## Current Status
 
-**Phase:** Phase 7 Complete  
-**Progress:** Full pipeline from raw data to AI-generated narratives, live dashboard, LLM observability, PostgreSQL migration, dbt transformation layer, Power BI reporting layer, and GitHub Actions CI/CD  
+**Phase:** Phase 7.5 Complete  
+**Progress:** Full pipeline from raw data to AI-generated narratives, live dashboard, LLM observability, PostgreSQL migration, dbt transformation layer, Power BI reporting layer, GitHub Actions CI/CD - plus a full operational hardening pass that actually ran every layer end-to-end against live infrastructure and fixed what broke  
 **Next Up:** Phase 8 - AWS deployment (EC2, RDS, S3), FastAPI layer, live public URL
 
 ### Completed:
@@ -59,6 +59,10 @@ This project analyses real UK retail transaction data to automatically:
   - Built 4-page Power BI report connected to the analytics schema via ODBC
   - GitHub Actions CI/CD pipeline running dbt compile and schema tests on every push, pytest on every PR
   - See Phase 7 section below for full details
+- **Phase 7.5 - Operational Hardening (Complete):**
+  - Ran a 4-domain code review (Python pipeline, RAG/LLM layer, dbt/SQL, security) and fixed every CRITICAL and HIGH finding: a transaction rollback bug in `migrate.py`, a division-by-zero in the dbt weekly model, SQL identifier injection hardening, a fail-closed database password, `tenant_id` path-traversal validation, and RAG retrieval quality
+  - Then actually ran the whole pipeline end-to-end against live infrastructure instead of stopping at "the code looks right" - this surfaced a Windows console encoding crash, a fully deprecated LLM model, a stale network relay stealing the database port, an unrecoverable database password, and a silent data-duplication bug that static review had no way to catch
+  - See "Phase 7.5: Operational Hardening" in the Development Plan section below for the full story
 
 ### Future Ideas (might add later):
 - AWS deployment (EC2, RDS, S3) with FastAPI layer and live public URL
@@ -489,7 +493,7 @@ RAG pipeline built with LangChain LCEL + ChromaDB + sentence-transformers. A cro
 ### Phase 7: PostgreSQL + dbt + Power BI + CI/CD (Complete)
 
 #### PostgreSQL migration
-Migrated all pipeline outputs to PostgreSQL 15 running in Docker. `scripts/migrate.py` is idempotent - it uses upsert logic for tables with unique constraints and accepts a `--reset` flag for tables without them (root_causes). Final verified counts: raw_transactions 541,909, kpi_results 22, anomalies 46, root_causes 77, llm_calls 76, narratives 38.
+Migrated all pipeline outputs to PostgreSQL 15 running in Docker. `scripts/migrate.py` is idempotent, but getting there properly took two passes: `kpi_results`, `anomalies`, and `narratives` have real unique constraints and use genuine `ON CONFLICT` upsert logic, `root_causes` got a `UNIQUE (anomaly_id, segment_rank)` constraint during the Phase 7.5 hardening pass once the actual insert grain was worked out, and `raw_transactions`/`llm_calls` always truncate before reload since checking the real data confirmed neither has a safe natural key to upsert against. Final verified counts on a clean run: raw_transactions 541,909, kpi_results 22, anomalies 46, root_causes 77, llm_calls 76, narratives 38.
 
 The schema in `sql/init.sql` includes indexes on all query columns and three pre-built views: `vw_kpi_with_anomaly_flag`, `vw_llm_monitoring_summary`, and `vw_anomaly_clusters`.
 
@@ -513,6 +517,34 @@ Known limitation: the root cause page is dominated by United Kingdom as the top 
 Two workflows wired to the repository. `dbt_ci.yml` runs on every push - it spins up a PostgreSQL 15 service container, pins dbt-core and dbt-postgres to 1.9.0, creates a profiles.yml targeting the service container, initialises the schema from `sql/init.sql`, and runs `dbt compile` followed by `dbt test --select source:*`. `python_ci.yml` runs on every PR to main and executes the pytest suite in `tests/`.
 
 The dbt version pin matters: dbt-core 2.0.0-alpha.2 dropped postgres adapter support in favour of dbt Fusion. Pinning to 1.9.0 keeps the workflow stable.
+
+### Phase 7.5: Operational Hardening - Running It For Real
+
+Everything through Phase 7 had been verified by reading the code, running unit-level checks, and running each layer in isolation. It had never been run start to finish against live infrastructure - a real Postgres container, a real LLM API, a real Windows terminal - in one continuous pass. Phase 7.5 was that pass, and it found a category of bug that code review structurally cannot see.
+
+#### Round 1: multi-domain code review
+
+Four focused reviews ran in parallel against the codebase - Python pipeline, the RAG/LLM narrative layer, the dbt/SQL layer, and a security pass. Combined, they surfaced two CRITICAL and roughly a dozen HIGH/MEDIUM findings, all fixed:
+
+- **`migrate.py` transaction handling** - when a bulk insert failed, the row-by-row fallback ran on the same connection without rolling back first, so Postgres rejected every row with "transaction aborted" instead of surfacing the actual bad row. A second bug in the same fallback let a later row's rollback silently erase earlier rows that had already succeeded, while the success counter kept counting them.
+- **Division by zero in `int_weekly_transactions.sql`** - `SUM(line_total) / COUNT(distinct customer_id)` had no `NULLIF` guard, unlike the equivalent line in `mart_weekly_kpis.sql`. With 24.9% of transactions missing a `customer_id` (guest checkouts), any weekly/country/product group made up entirely of guests would crash the dbt build.
+- **SQL identifiers built via f-string interpolation** in `database.py`'s bulk insert/upsert/truncate helpers - not exploitable with the current hardcoded call sites, but a shared utility one careless future caller away from injection. Added an allow-list identifier validator.
+- **Hardcoded fallback database password** (`analytics_dev`) - silently used if `POSTGRES_PASSWORD` was ever unset, instead of failing loudly. Changed to raise if the environment variable is missing.
+- **`tenant_id` used unvalidated in filesystem paths and vector store collection names** - a `TenantConfig` field with a documented multi-tenant future and no validation is a path-traversal bug waiting for its first untrusted caller. Added an allow-list regex.
+- **RAG retrieval quality** - the similarity query was a near-constant string per KPI ("KPI: Total Revenue. Anomaly detected."), so "3 most similar historical anomalies" was mostly noise. Anchored the query to the anomaly's actual severity, direction, and magnitude, and added a distance cutoff so weak matches get dropped instead of presented as meaningful history.
+- **RAG cost/token tracking was silently hardcoded to zero** - the LangChain LCEL chain was piped through `StrOutputParser`, which discards the response metadata that carries real token counts. Every `v2-rag` row in the monitoring log showed `$0.00`, masking that RAG prompts cost more than standard ones. Fixed by keeping the raw `AIMessage` and reading its usage metadata directly.
+
+#### Round 2: actually running it
+
+Static review, however thorough, only checks whether code looks correct. Running it against real infrastructure found bugs that no amount of reading would have surfaced:
+
+- **Windows console `UnicodeEncodeError`** - `print()` and `logging` calls throughout the pipeline use checkmarks, box-drawing characters, £, and arrows. Windows' default console codepage (cp1252) can't encode them, so `validation.py` and `kpis/engine.py` crashed the instant they tried to print a result. Fixed once, centrally, by reconfiguring stdout/stderr to UTF-8 in `src/__init__.py` rather than hunting down every individual character across a dozen files.
+- **Groq fully deprecated the narrative model.** `llama-3.1-8b-instant` - the model both `narrator.py` and `rag_narrator.py` are built around - no longer exists on Groq's API. This was invisible in a normal pipeline run because every anomaly already had a cached narrative from before the deprecation; only a genuinely new anomaly would have hit the dead model and failed silently. Checked the account's live model list, tested three replacement candidates against the actual prompt: two (`openai/gpt-oss-20b`, `qwen/qwen3.6-27b`) are reasoning models that burned the entire token budget on hidden chain-of-thought and returned empty output at the project's existing `max_tokens=200`. `allam-2-7b` behaved like a normal instruct model and produced clean, on-topic narratives at the existing settings - selected and verified with real API calls.
+- **A stale WSL2 port relay was stealing the database connection.** After starting Docker, `scripts/migrate.py` failed with a password error even with the correct password. `netstat` showed two separate processes listening on port 5432 - Docker's own proxy, and a leftover `wslrelay.exe` bound specifically to the IPv6 loopback address, left over from a previous session. Since Windows resolves `localhost` to `::1` first, every connection was being silently routed through the dead relay. Killed the stale process; the real connection worked immediately.
+- **The database's real password was unknown.** Even after clearing the port conflict, authentication still failed. The Postgres container's data volume was initialised five months earlier with whatever `POSTGRES_PASSWORD` was in effect *then* - environment variables only set the password on first initialisation, not on every container start - and that value matched neither `docker-compose.yaml`'s current default nor a third, different password sitting in a personal, untracked `~/.dbt/profiles.yml`. Diagnosed by reading `pg_hba.conf` inside the container: loopback connections are `trust`-authenticated (no password check at all), which is why an earlier sanity check via `docker exec` had given a false "it works" - it never actually validated anything. Reset the real password through that trusted local connection, then reconciled all three credential sources to agree.
+- **A silent data-duplication bug, caught only by not trusting the tool's own numbers.** `psycopg2`'s `execute_values` pages large inserts internally (100 rows per page by default) and only reports the *last* page's row count afterward - so a 541,909-row load logged "5,409 rows inserted" while the real database had actually received the full amount. That misreporting was hiding a worse problem: `raw_transactions` and `root_causes` have no unique constraint, so `ON CONFLICT DO NOTHING` never had anything to conflict against, and a second migration run silently doubled both tables (541,909 -> 1,083,818; 77 -> 154). This was only caught by running `SELECT COUNT(*)` directly against the database instead of trusting the migration script's printed summary. Fixed the rowcount bug by forcing a single `execute_values` page, and fixed the duplication properly rather than working around it again: checked whether `raw_transactions` actually has a safe natural key first (it doesn't - 9,694 groups of `invoice_no + stock_code` legitimately repeat as separate line items in the real dataset), so that table and the append-only `llm_calls` log now always truncate before reload, while `root_causes` got a real `UNIQUE (anomaly_id, segment_rank)` constraint. Verified by running the migration twice in a row with zero row growth on the second run.
+
+None of these five were visible from reading the code. All five were found by running the system, checking real outputs against ground truth, and refusing to accept a log line as proof that something worked.
 
 ### Phase 8 (Planned)
 AWS deployment - EC2, RDS, S3. FastAPI layer. Live public URL.
@@ -539,7 +571,7 @@ AWS deployment - EC2, RDS, S3. FastAPI layer. Live public URL.
 - SciPy and Statsmodels
 - PyYAML for config parsing
 - Streamlit, Plotly
-- Groq (Llama 3.1-8b-instant), LangChain, ChromaDB, sentence-transformers
+- Groq (allam-2-7b, previously Llama 3.1-8b-instant until Groq deprecated it), LangChain, ChromaDB, sentence-transformers
 - PostgreSQL 15, Docker, psycopg2
 - dbt (dbt-postgres 1.9.0)
 - Power BI Desktop (connected via psqlODBC)
@@ -557,8 +589,8 @@ AWS deployment - EC2, RDS, S3. FastAPI layer. Live public URL.
 - `revenue_by_country` currently returns total revenue as a scalar. The actual per-country breakdown will be handled as a visualisation later.
 - Config YAML validation is basic - could add schema validation
 - Root cause contribution percentages can exceed 100% for the primary driver. This is not a calculation error - it happens when the dominant segment overperforms while other segments are simultaneously below their baseline. The number is mathematically correct but looks odd without that explanation.
-- RAG token counts are not captured for v2-rag calls - LangChain LCEL's pipe syntax doesn't return a usage object directly. Latency is captured correctly.
 - Power BI root cause page shows United Kingdom as the dominant segment for all anomalies, reflecting dataset composition rather than a reporting error.
+- `allam-2-7b` (the Groq model narratives now run on, after `llama-3.1-8b-instant` was deprecated - see Phase 7.5) follows the prompt's formatting instructions less reliably than the old model did. Quality flag rates roughly doubled after the switch. Not broken, just a prompt that needs re-tightening for the new model.
 
 ---
 
@@ -613,11 +645,13 @@ These are real bugs that appeared during the build and required actual diagnosis
 
 **Prompt violations caught by monitoring** - 8 out of 19 v1 narratives contained percentages, violating the explicit prompt instruction not to use them. I wouldn't have caught this by reading outputs manually - 8/19 is easy to miss when skimming. The monitoring layer flagged it automatically. The fix was tightening the v2 prompt wording, and the monitoring log confirmed the violation rate dropped from 42% to 0%.
 
-**Duplicate rows from repeated migration runs** - Running `migrate.py` multiple times without resetting the database produced 1,625,727 rows in raw_transactions (3 x 541,909) and 154 rows in root_causes (2 x 77). Caught by running a COUNT(*) verification query after each migration. Fixed by running `docker-compose down -v` to wipe the volume and re-migrating once cleanly. Led to adding explicit row count verification as a post-migration step.
+**Duplicate rows from repeated migration runs** - Running `migrate.py` multiple times without resetting the database produced 1,625,727 rows in raw_transactions (3 x 541,909) and 154 rows in root_causes (2 x 77). Caught by running a COUNT(*) verification query after each migration. At the time, fixed by running `docker-compose down -v` to wipe the volume and re-migrating once cleanly - which worked, but only masked the actual cause. It recurred during the Phase 7.5 hardening pass (see below) because neither table had ever had a unique constraint capable of making `ON CONFLICT DO NOTHING` actually do anything; `docker-compose down -v` just reset the symptom, not the bug. That pass added the real fix: a genuine `UNIQUE (anomaly_id, segment_rank)` constraint on root_causes, and always-truncate-before-load semantics for raw_transactions once checking the actual data confirmed it has no safe natural key. Lesson: a workaround that makes the symptom go away is not the same as understanding why it happened, and it will come back.
 
 **dbt column name mismatch** - The initial `mart_anomaly_summary` model referenced `a.date` and `r.driver_1_dimension`, neither of which existed in the actual schema. The anomalies table uses `anomaly_date`, and root_causes stores drivers as individual rows with `dimension`, `segment_value`, and `segment_rank` columns rather than denormalised driver_1/driver_2/driver_3 columns. Caught by running `dbt run` and reading the Database Error output, then inspecting the actual schema with `\d anomalies` and `\d root_causes` in psql. Fixed by rewriting the mart model to filter `segment_rank = 1` and join on the correct column names.
 
 **dbt CI pre-release version conflict** - The initial GitHub Actions workflow pulled dbt-core 2.0.0-alpha.2 from PyPI, which dropped postgres adapter support in favour of dbt Fusion. The workflow failed immediately with an InvalidConfig error. Fixed by pinning both dbt-core and dbt-postgres explicitly to 1.9.0 in the install step. Pre-release packages on PyPI are installed by default when no version pin is specified, which makes explicit pinning essential for stable CI.
+
+**Five more bugs that only appeared when the whole system was actually run end-to-end** - A Phase 7.5 hardening pass (full write-up under "Phase 7.5: Operational Hardening" above) went beyond code review and ran ingestion through dbt in one continuous pass against live infrastructure. It found a Windows console encoding crash, a fully deprecated LLM model masked by narrative caching, a stale WSL2 network relay silently stealing the database connection, a lost database password across three disagreeing credential sources, and a `psycopg2` rowcount bug that hid a real data-duplication issue. None of these were visible from reading the code - every one needed the system actually running and its output checked against ground truth, not against what the logs claimed.
 
 ### What this taught me about working with AI tools
 
@@ -637,9 +671,9 @@ If an interviewer wants to walk through any part of this codebase, I can explain
 
 ---
 
-**Status:** Phase 7 Complete  
+**Status:** Phase 7.5 Complete  
 **Next:** Phase 8 - AWS deployment (EC2, RDS, S3), FastAPI layer, live public URL
 
 *Second year CS student building this to understand how production analytics systems actually work. Building in phases rather than a fixed schedule - shipping each layer properly before moving to the next.*
 
-Last updated: June 2026
+Last updated: September 2026

@@ -3,247 +3,247 @@
     "kpi_name": "active_customers",
     "date": "2010-12-26 00:00:00",
     "severity": "low",
-    "narrative": "On December 26, 2010, there was a decrease in active customers, primarily driven by the UK market during the late afternoon and early morning hours. This anomaly likely indicates a seasonal dip in customer activity, similar to the low-severity anomaly in November 2011, which also occurred in the UK market, suggesting a potential need to adjust marketing strategies or promotions to better engage customers during this time.",
+    "narrative": "On December 26, 2010, we observed a low-severity anomaly in the Active Customers metric for the United Kingdom. Customers were 60.3% lower than expected during the hours of 15:00 and 10:00. This may indicate an unusual event or marketing campaign during that timeframe impacting the UK customer base. \n\nGiven the similarity to the December 2011 anomalies where stock codes 23084.0 and 22086.0 drove anomalies in the Active Customers metric, it is plausible that a similar factor, possibly related to these stock codes, may have influenced the observed anomaly as well. Further investigation is recommended to confirm the cause and assess its potential impact on customer engagement and revenue in the UK market.",
     "retrieved_context": [
-      "active_customers_2011-11-20",
-      "active_customers_2011-12-04",
-      "active_customers_2011-11-27"
+      "active_customers_2011-11-27",
+      "active_customers_2011-11-13",
+      "active_customers_2011-12-04"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:01.805278"
+    "generated_at": "2026-09-08T19:19:59.842059"
   },
   "total_revenue_2011-09-25": {
     "kpi_name": "total_revenue",
     "date": "2011-09-25 00:00:00",
     "severity": "low",
-    "narrative": "Total Revenue on September 25, 2011, was significantly higher than expected, primarily driven by sales in the United Kingdom during the 11am and 10am hours. This anomaly likely indicates a strong sales performance in the UK during the morning hours, which is consistent with historical patterns, such as the high sales in the UK during the late afternoon and early evening hours in November 2011.",
+    "narrative": "On September 25, 2011, our business experienced a low-severity anomaly in the United Kingdom, where total revenue was 103.1% higher than expected. This increase can be attributed to higher sales during morning hours (11.0am and 10.0am). \n\nBased on our historical analysis, similar anomalies with low severity occurred in November 2011 and December 2011, both driven by the same UK segment and morning hours. These events may indicate a pattern of seasonal or daily sales trends in this region and time, which could be leveraged to optimize marketing strategies or product offerings during these periods.",
     "retrieved_context": [
+      "total_revenue_2011-11-13",
       "total_revenue_2011-12-04",
-      "total_revenue_2011-11-20",
-      "total_revenue_2011-11-13"
+      "total_revenue_2011-11-20"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:02.044825"
+    "generated_at": "2026-09-08T19:20:00.287580"
   },
   "units_sold_2011-09-25": {
     "kpi_name": "units_sold",
     "date": "2011-09-25 00:00:00",
     "severity": "low",
-    "narrative": "On September 25, 2011, units sold were significantly higher than expected, with the United Kingdom being the main driver, particularly during the 11am and 10am hours. This likely indicates a strong sales performance in the UK market, echoing a similar pattern seen in the UK on October 2011, when units sold were also higher than expected, suggesting a consistent trend in the UK market during this time period.",
+    "narrative": "On September 25, 2011, we observed an anomaly in the number of units sold, which was 90.3% higher than expected. This increase can be attributed to the United Kingdom market, specifically during the hours of 11 AM and 10 AM. In the past, we have seen similar patterns in October 2011 and December 2011, likely due to specific events or promotions taking place during those hours in that region.",
     "retrieved_context": [
       "units_sold_2011-11-13",
-      "units_sold_2011-11-27",
+      "units_sold_2011-12-11",
       "units_sold_2011-10-09"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:02.331128"
+    "generated_at": "2026-09-08T19:20:00.702644"
   },
   "units_sold_2011-10-09": {
     "kpi_name": "units_sold",
     "date": "2011-10-09 00:00:00",
     "severity": "low",
-    "narrative": "On October 9, 2011, units sold were significantly higher than expected, with the United Kingdom segment driving this increase, particularly during the 10:00 and 12:00 hour periods.\n\nThis anomaly likely indicates that the company's sales strategy in the UK is effective during morning hours, which is consistent with a historical pattern observed in November 2011, where units sold were also higher than expected during similar morning hours.",
+    "narrative": "On October 9th, 2011, we observed an anomaly in the number of units sold, with the United Kingdom segment experiencing a higher than expected demand during morning hours (10.0 and 12.0). This could be due to a promotional event or unexpected marketing campaign targeting this demographic. \n\nBased on our analysis of historical patterns, events like these can boost short-term sales and increase brand awareness. However, it is essential to determine the cause and ensure it becomes a sustainable strategy to maintain long-term growth and customer loyalty.",
     "retrieved_context": [
-      "units_sold_2011-09-25",
+      "units_sold_2011-12-11",
       "units_sold_2011-11-13",
-      "units_sold_2011-11-27"
+      "units_sold_2011-11-20"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:02.600627"
+    "generated_at": "2026-09-08T19:20:01.113846"
   },
   "active_customers_2011-11-13": {
     "kpi_name": "active_customers",
     "date": "2011-11-13 00:00:00",
     "severity": "medium",
-    "narrative": "On November 13, 2011, there was a significant increase in active customers, primarily driven by the United Kingdom market, with a focus on stock code 23084.0 and sales during the 12 o'clock hour.\n\nThis surge in active customers likely indicates a strong sales performance in the UK market, particularly for stock code 23084.0, and may be a sign of a similar trend to the high-severity anomaly in November 2011, which was also driven by the UK market and stock code 23084.0.",
+    "narrative": "On November 13, 2011, we observed an increase in the number of active customers in the United Kingdom, specifically related to StockCode 23084.0 and during the HourOfDay 12.0. This event likely indicates a temporary surge in customer activity in that specific segment, possibly due to external factors or marketing initiatives. Comparing this anomaly to historical patterns, we can see a similar event occurred in November 2011, driven by the United Kingdom, StockCode 23084.0, and HourOfDay 13.0, which resolved within a day.",
     "retrieved_context": [
-      "active_customers_2011-11-20",
       "active_customers_2011-12-04",
-      "active_customers_2011-11-27"
+      "active_customers_2011-11-27",
+      "active_customers_2011-11-20"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:02.863882"
+    "generated_at": "2026-09-08T19:20:01.571376"
   },
   "order_count_2011-11-13": {
     "kpi_name": "order_count",
     "date": "2011-11-13 00:00:00",
     "severity": "low",
-    "narrative": "On November 13, 2011, the company experienced a low-severity anomaly in order count, primarily driven by sales in the United Kingdom, particularly for two specific product stock codes, 23084.0 and 22086.0. This surge in sales is likely a continuation of a historical pattern observed in November 2011, where the United Kingdom market showed strong demand for these products, and may indicate a seasonal or regional trend that the business should consider in future planning.",
+    "narrative": "On November 13, 2011, we observed a low-severity anomaly in the Order Count metric for the United Kingdom, driven by StockCodes 23084.0 and 22086.0. This event resulted in a 75.9% increase in orders compared to expectations. In comparison to a similar incident in November 2011, where the severity was high, this anomaly seems milder. However, the shared drivers suggest a potential seasonal surge in demand for these specific products in the UK market, which could have a positive impact on sales and revenue for these stock items.",
     "retrieved_context": [
-      "order_count_2011-11-20",
+      "order_count_2011-12-04",
       "order_count_2011-11-27",
-      "order_count_2011-12-04"
+      "order_count_2011-11-20"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:03.140921"
+    "generated_at": "2026-09-08T19:20:03.023369"
   },
   "total_revenue_2011-11-13": {
     "kpi_name": "total_revenue",
     "date": "2011-11-13 00:00:00",
     "severity": "medium",
-    "narrative": "On November 13, 2011, total revenue was significantly higher than expected, with the United Kingdom segment driving this increase, particularly during the hours of 17:00 and 10:00. This anomaly likely indicates a strong sales performance in the UK market, which could be a positive trend for the business, similar to the historical pattern observed in November 2011, where the UK segment also drove a high revenue anomaly.",
+    "narrative": "On November 13, 2011, our business experienced a moderate revenue anomaly in the United Kingdom, specifically during the hours of 17:00 and 10:00. This was likely due to a temporary surge in sales or events in those time slots, which drove the higher-than-expected revenue. Comparing this event to our historical data, a similar situation occurred in December 2011, also driven by the United Kingdom and hours 16:00 and 15:00. This might indicate seasonality or special promotions related to specific time slots in our key market, which could be leveraged for future campaigns.",
     "retrieved_context": [
+      "total_revenue_2011-11-20",
       "total_revenue_2011-09-25",
-      "total_revenue_2011-12-04",
-      "total_revenue_2011-11-20"
+      "total_revenue_2011-12-04"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:03.383811"
+    "generated_at": "2026-09-08T19:20:09.535727"
   },
   "units_sold_2011-11-13": {
     "kpi_name": "units_sold",
     "date": "2011-11-13 00:00:00",
     "severity": "medium",
-    "narrative": "On November 13, 2011, units sold spiked significantly in the United Kingdom, with the highest sales occurring at 5 pm and 10 am. This surge in sales likely indicates a strong marketing campaign or promotional event in the UK, possibly building on historical patterns of increased sales in the UK during late afternoon and early morning hours, such as seen in the 2011 anomalies.",
+    "narrative": "On November 13, 2011, there was a notable increase in the number of units sold. In the United Kingdom, sales occurred not only during typical peak hours (17.0 and 10.0) but also during an unusual early hour (10.0). This could indicate a potential marketing campaign or promotion that attracted customers to purchase our product earlier than usual. \n\nBased on our historical analysis, events like this can have a positive impact on sales and customer engagement. It is advisable to explore the factors behind this anomaly, such as marketing activities, to replicate the success and engage customers in a similar manner in the future.",
     "retrieved_context": [
-      "units_sold_2011-09-25",
-      "units_sold_2011-11-27",
+      "units_sold_2011-11-20",
+      "units_sold_2011-12-11",
       "units_sold_2011-10-09"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:03.618886"
+    "generated_at": "2026-09-08T19:20:15.037690"
   },
   "active_customers_2011-11-20": {
     "kpi_name": "active_customers",
     "date": "2011-11-20 00:00:00",
     "severity": "high",
-    "narrative": "On November 20, 2011, the number of active customers was significantly higher than expected, primarily driven by customers in the United Kingdom who purchased StockCode 23084.0 during the 1 o'clock hour. This anomaly likely indicates a strong sales performance in this specific product and time of day, potentially mirroring a similar historical pattern observed in December 2011 when the same product and UK customers drove a high-severity anomaly.",
+    "narrative": "On November 20th, 2011, there was a significant increase in the number of active customers in the United Kingdom, specifically for StockCode 23084.0 during the 13th hour of the day. This anomaly is similar to the November 2011 events, where anomalies occurred in the same country, StockCode, and hour, driving the metric above expectations. \n\nThis unusual spike could indicate a one-time promotional campaign or event that attracted more customers during that specific time in the UK. It is crucial for the business to investigate these events, understand the drivers, and learn from any potential marketing or operational improvements made during that time to prevent similar spikes from negatively affecting our regular customer growth rate.",
     "retrieved_context": [
       "active_customers_2011-12-04",
-      "active_customers_2011-11-27",
-      "active_customers_2011-11-13"
+      "active_customers_2011-11-13",
+      "active_customers_2011-11-27"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:03.886173"
+    "generated_at": "2026-09-08T19:20:21.579193"
   },
   "order_count_2011-11-20": {
     "kpi_name": "order_count",
     "date": "2011-11-20 00:00:00",
     "severity": "high",
-    "narrative": "On November 20, 2011, the company experienced a significant spike in order count, primarily driven by sales in the United Kingdom, specifically through StockCode 23084.0 and StockCode 22086.0.\n\nThis anomaly suggests that the company's sales in the UK market, particularly through these two product lines, are experiencing unusually high demand, echoing a similar pattern observed in November 2011, which was also driven by the UK market, and may indicate a potential opportunity for the business to capitalize on this trend.",
+    "narrative": "On November 20th, 2011, there was a significant increase in the number of orders for products in the United Kingdom, specifically StockCodes 23084.0 and 22086.0. This surge likely indicates a successful marketing campaign or a temporary stock availability boost in those specific product segments within the UK market.",
     "retrieved_context": [
+      "order_count_2011-12-04",
       "order_count_2011-11-13",
-      "order_count_2011-11-27",
-      "order_count_2011-12-04"
+      "order_count_2011-11-27"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:04.154291"
+    "generated_at": "2026-09-08T19:20:28.090112"
   },
   "total_revenue_2011-11-20": {
     "kpi_name": "total_revenue",
     "date": "2011-11-20 00:00:00",
     "severity": "high",
-    "narrative": "On November 20, 2011, the company saw a significant spike in total revenue, primarily driven by sales in the United Kingdom during the late afternoon and early evening hours. This anomaly likely indicates that the company's business in the UK is experiencing strong demand during these times, which could be a positive trend, similar to historical patterns observed in 2011, such as the medium-severity anomaly in November of that year.",
+    "narrative": "On November 20th, 2011, our total revenue experienced a significant spike, which was primarily driven by sales in the United Kingdom during late afternoon hours (17.0 and 15.0). This anomaly could be attributed to a possible one-time promotional event or unexpectedly high customer demand during those specific time slots in the UK. \n\nGiven the historical pattern of similar events in November 2011, it is reasonable to assume that this revenue surge might have been caused by a temporary marketing campaign or unforeseen demand surge in the UK market during late afternoon hours. This could indicate a potential opportunity for increased sales in that market during similar time frames in the future, if the cause can be replicated effectively.",
     "retrieved_context": [
+      "total_revenue_2011-11-13",
       "total_revenue_2011-09-25",
-      "total_revenue_2011-12-04",
-      "total_revenue_2011-11-13"
+      "total_revenue_2011-12-04"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:04.389146"
+    "generated_at": "2026-09-08T19:20:33.670671"
   },
   "units_sold_2011-11-20": {
     "kpi_name": "units_sold",
     "date": "2011-11-20 00:00:00",
     "severity": "medium",
-    "narrative": "On November 20, 2011, units sold were significantly higher than expected, with the United Kingdom segment driving this increase, particularly during the hours of 17.0 and 15.0. This likely means that the business experienced a surge in demand from the UK market during the late afternoon and early evening hours, which could be a positive trend for the company, similar to the historical pattern observed in November 2011 when units sold were also above expected during the same time period.",
+    "narrative": "On November 20th, 2011, we observed an increase in units sold of 106.6% above the expected value in the United Kingdom. This surge can be attributed to higher sales during evening hours, specifically 17:00 and 15:00. Given the historical pattern of anomalies involving the United Kingdom, it is possible that this event may have been influenced by a promotional campaign or seasonal factors during those specific time slots.",
     "retrieved_context": [
-      "units_sold_2011-09-25",
       "units_sold_2011-11-13",
-      "units_sold_2011-11-27"
+      "units_sold_2011-10-09",
+      "units_sold_2011-12-11"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:04.657212"
+    "generated_at": "2026-09-08T19:20:40.171801"
   },
   "active_customers_2011-11-27": {
     "kpi_name": "active_customers",
     "date": "2011-11-27 00:00:00",
     "severity": "low",
-    "narrative": "Active customers on November 27, 2011, were higher than expected, primarily driven by sales in the United Kingdom, particularly for StockCode 23084.0 and StockCode 22086.0. This increase is likely a sign of continued strong demand in the UK market, echoing the historical pattern of high demand in the UK during the same time in 2011, as seen in the anomalies in November and December of that year.",
+    "narrative": "On November 27, 2011, we observed a low-severity anomaly in the Active Customers metric for the United Kingdom, driven by StockCodes 23084.0 and 22086.0. This event resulted in a 69.8% increase in active customers compared to expectations. In this instance, the impact appears to be less significant than the high-severity anomalies mentioned, such as the November 2011 events with StockCode 23084.0 and HourOfDay 13.0, which led to a 101.3% increase.",
     "retrieved_context": [
-      "active_customers_2011-11-20",
+      "active_customers_2011-11-13",
       "active_customers_2011-12-04",
-      "active_customers_2011-11-13"
+      "active_customers_2011-11-20"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:06.945132"
+    "generated_at": "2026-09-08T19:20:45.795124"
   },
   "order_count_2011-11-27": {
     "kpi_name": "order_count",
     "date": "2011-11-27 00:00:00",
     "severity": "low",
-    "narrative": "On November 27, 2011, the company experienced a low-severity anomaly in order count, primarily driven by sales in the United Kingdom, particularly for StockCodes 23084.0 and 22086.0.\n\nThis anomaly likely indicates a temporary surge in demand for these specific products in the UK market, which may be a repeat of the historical pattern observed in November 2011, where similar anomalies were also driven by the same stock codes and country.",
+    "narrative": "On November 27, 2011, we observed a low-severity anomaly in the Order Count metric. In the United Kingdom, specific stock codes 23084.0 and 22086.0 contributed to a 69.8% increase in orders above expectations. This surge can be attributed to a possible promotional event or limited-time offer involving these products, as seen in similar historical patterns. \n\nThis anomaly indicates a potential boost in sales and customer interest in the mentioned stock codes. It highlights the importance of tracking and analyzing such events to inform future marketing and product strategies, ensuring we capitalize on such opportunities while managing any potential negative impacts on inventory and customer satisfaction.",
     "retrieved_context": [
-      "order_count_2011-11-20",
+      "order_count_2011-12-04",
       "order_count_2011-11-13",
-      "order_count_2011-12-04"
+      "order_count_2011-11-20"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:12.298254"
+    "generated_at": "2026-09-08T19:20:52.312990"
   },
   "units_sold_2011-11-27": {
     "kpi_name": "units_sold",
     "date": "2011-11-27 00:00:00",
     "severity": "low",
-    "narrative": "On November 27, 2011, units were sold at a higher rate than expected, primarily driven by sales in the United Kingdom during the 15:00 and 10:00 hour slots. This anomaly likely indicates a strong sales trend in the UK market, similar to previous anomalies in October and November 2011, suggesting that the UK remains a key region for driving sales growth.",
+    "narrative": "On November 27, 2011, we observed an anomaly in the Units Sold metric, which was 87.4% higher than expected. This increase can be attributed to the United Kingdom market, specifically during the hours of 15:00 and 10:00. In comparison to our historical data, this event falls within the low severity category, similar to the December 2011 and October 2011 anomalies. It is possible that this surge in sales could be a result of a promotional event or product launch in the UK, which may have a positive impact on sales in the short term.",
     "retrieved_context": [
-      "units_sold_2011-09-25",
-      "units_sold_2011-11-13",
-      "units_sold_2011-10-09"
+      "units_sold_2011-12-11",
+      "units_sold_2011-10-09",
+      "units_sold_2011-11-13"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:16.602323"
+    "generated_at": "2026-09-08T19:20:58.834140"
   },
   "active_customers_2011-12-04": {
     "kpi_name": "active_customers",
     "date": "2011-12-04 00:00:00",
     "severity": "high",
-    "narrative": "On December 04, 2011, the number of active customers spiked significantly, primarily driven by sales in the United Kingdom, particularly through StockCode 23084.0 and StockCode 22086.0.\n\nThis sudden surge in active customers in the United Kingdom likely indicates a strong sales performance, which could be a result of successful marketing campaigns or promotions, similar to the high-severity anomaly in November 2011 that also involved StockCode 23084.0.",
+    "narrative": "On December 4th, 2011, we observed a significant increase in the number of active customers in the United Kingdom, associated with stock codes 23084.0 and 22086.0. This event likely indicates a temporary surge in customer engagement, possibly driven by marketing campaigns or product promotions targeting these specific segments. \n\nGiven the historical patterns, it is reasonable to assume that this anomaly could have a positive impact on sales and revenue, as these targeted segments have shown a higher tendency to make purchases in the past. We should closely monitor the situation and prepare to capitalize on the increased customer activity by ensuring efficient inventory management and effective customer service.",
     "retrieved_context": [
+      "active_customers_2011-11-13",
       "active_customers_2011-11-20",
-      "active_customers_2011-11-27",
-      "active_customers_2011-11-13"
+      "active_customers_2011-11-27"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:22.006564"
+    "generated_at": "2026-09-08T19:21:04.386933"
   },
   "order_count_2011-12-04": {
     "kpi_name": "order_count",
     "date": "2011-12-04 00:00:00",
     "severity": "medium",
-    "narrative": "The order count on December 04, 2011, was significantly higher than expected, driven by strong demand from the United Kingdom, particularly for StockCodes 23084.0 and 22086.0. This surge in orders likely indicates a strong sales performance in the UK market, echoing a similar pattern observed in November 2011 when the UK market also drove a notable increase in orders, suggesting a sustained demand in this region.",
+    "narrative": "On December 4th, 2011, we observed a moderate increase in the Order Count metric within the United Kingdom, specifically influenced by products StockCode 23084.0 and StockCode 22086.0. This event can be attributed to a combination of factors, as seen in similar historical patterns. In these instances, elevated order volumes were driven by seasonal shopping sprees or promotional campaigns in the UK, which likely led to higher demand for these specific products.",
     "retrieved_context": [
+      "order_count_2011-11-27",
       "order_count_2011-11-20",
-      "order_count_2011-11-13",
-      "order_count_2011-11-27"
+      "order_count_2011-11-13"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:26.360937"
+    "generated_at": "2026-09-08T19:21:10.925277"
   },
   "total_revenue_2011-12-04": {
     "kpi_name": "total_revenue",
     "date": "2011-12-04 00:00:00",
     "severity": "low",
-    "narrative": "Total Revenue on December 04, 2011 was significantly higher than expected, driven by sales in the United Kingdom during the late afternoon hours, particularly between 4 and 5 pm and 3 and 4 pm. This anomaly is consistent with a historical pattern of strong sales in the UK during late afternoon hours, which has been observed in previous years, including in November 2011, suggesting that this may be a recurring trend that the business can capitalize on.",
+    "narrative": "On December 4th, 2011, we observed a low-severity anomaly in the United Kingdom where the total revenue exceeded expectations by 99.2%. This surge was primarily driven by higher sales during the hours of 4pm and 5pm. Comparing this event to our historical data, we can see a similar pattern occurred in November 2011, particularly on November 27th, when the United Kingdom experienced strong sales during late afternoon hours. This could indicate a potential peak in consumer spending during specific time slots, which businesses should consider scheduling marketing campaigns or staffing adjustments accordingly.",
     "retrieved_context": [
       "total_revenue_2011-09-25",
-      "total_revenue_2011-11-20",
-      "total_revenue_2011-11-13"
+      "total_revenue_2011-11-13",
+      "total_revenue_2011-11-20"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:31.699569"
+    "generated_at": "2026-09-08T19:21:16.452919"
   },
   "units_sold_2011-12-11": {
     "kpi_name": "units_sold",
     "date": "2011-12-11 00:00:00",
     "severity": "low",
-    "narrative": "On December 11, 2011, sales were unusually high, with the United Kingdom being the main driver, followed by sales peaking at 12:00 PM and 3:00 PM. This suggests that the business may be experiencing a repeat of the historical pattern seen in November 2011, where sales in the UK were also strong during the late morning and early afternoon hours, which could indicate a seasonal or regional trend that the company should consider leveraging in future sales strategies.",
+    "narrative": "On December 11, 2011, we observed an anomaly in the number of units sold, with a result that was 84.7% higher than expected. This abnormality was primarily driven by sales in the United Kingdom, specifically during the hours of 12.0 and 15.0. In comparison to historical patterns, this low-severity anomaly falls within the typical range of unit sales fluctuations.",
     "retrieved_context": [
-      "units_sold_2011-09-25",
       "units_sold_2011-11-13",
-      "units_sold_2011-11-27"
+      "units_sold_2011-10-09",
+      "units_sold_2011-11-20"
     ],
     "prompt_version": "v2-rag",
-    "generated_at": "2026-03-09T00:11:36.050975"
+    "generated_at": "2026-09-08T19:21:22.946599"
   }
 }

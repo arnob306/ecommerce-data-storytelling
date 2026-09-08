@@ -172,8 +172,8 @@ class DataValidator:
                 }
             
             elif name == "valid_transaction_value":
-                df["TransactionValue"] = df["Quantity"] * df["UnitPrice"]
-                violations = (df["TransactionValue"].abs() > 100000).sum()
+                transaction_value = df["Quantity"] * df["UnitPrice"]
+                violations = (transaction_value.abs() > 100000).sum()
                 
                 results[name] = {
                     "description": description,
@@ -256,26 +256,26 @@ class DataValidator:
         print("SCHEMA VALIDATION")
         print("-" * 60)
         if report["schema_validation"]["is_valid"]:
-            print("✓ Schema is valid")
+            print("PASS: Schema is valid")
         else:
             for e in report["schema_validation"]["errors"]:
-                print(f"✗ {e}")
-        
+                print(f"FAIL: {e}")
+
         print("\n" + "-" * 60)
         print("COMPLETENESS CHECKS")
         print("-" * 60)
         for col, r in report["completeness"].items():
-            status = "✓" if r["passes"] else "✗"
+            status = "PASS" if r["passes"] else "FAIL"
             print(
                 f"{status} {col}: {r['missing_percentage']:.1%} "
                 f"(threshold: {r['threshold']:.1%})"
             )
-        
+
         print("\n" + "-" * 60)
         print("CONSISTENCY CHECKS")
         print("-" * 60)
         for name, r in report["consistency"].items():
-            status = "✓" if r["passes"] else "✗"
+            status = "PASS" if r["passes"] else "FAIL"
             print(f"{status} {name}: {r['violations']} violations")
             print(f"  {r['description']}")
         

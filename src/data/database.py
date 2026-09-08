@@ -1,8 +1,9 @@
 
 import os
+import re
 import logging
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 
 import pandas as pd
@@ -13,13 +14,34 @@ from dotenv import load_dotenv
 load_dotenv()
 logger = logging.getLogger(__name__)
 
+_IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _validate_identifier(name: str) -> str:
+    """Raise if `name` isn't a safe bareword — guards against SQL injection
+    when table/column names are interpolated into query strings."""
+    if not _IDENTIFIER_RE.match(name):
+        raise ValueError(f"Unsafe SQL identifier: {name!r}")
+    return name
+
+
+def _require_env(name: str) -> str:
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(
+            f"Required environment variable {name} is not set. "
+            "Refusing to fall back to a default database password."
+        )
+    return value
+
+
 @dataclass
 class DatabaseConfig:
     host:     str = os.getenv("POSTGRES_HOST", "localhost")
     port:     int = int(os.getenv("POSTGRES_PORT", "5432"))
     dbname:   str = os.getenv("POSTGRES_DB",   "ecommerce_analytics")
     user:     str = os.getenv("POSTGRES_USER", "analytics_user")
-    password: str = os.getenv("POSTGRES_PASSWORD", "analytics_dev")
+    password: str = field(default_factory=lambda: _require_env("POSTGRES_PASSWORD"))
 
     @property
     def dsn(self) -> str:
@@ -119,14 +141,22 @@ def insert_dataframe(
         logger.warning(f"insert_dataframe: empty DataFrame, skipping {table_name}")
         return 0
 
+    _validate_identifier(table_name)
     columns = list(df.columns)
+    for c in columns:
+        _validate_identifier(c)
     col_str = ", ".join(columns)
     placeholder = f"INSERT INTO {table_name} ({col_str}) VALUES %s ON CONFLICT {conflict_action}"
 
     rows = [tuple(row) for row in df.itertuples(index=False, name=None)]
 
     with conn.cursor() as cur:
-        execute_values(cur, placeholder, rows)
+        # execute_values pages internally (default page_size=100) and issues
+        # one INSERT per page; cur.rowcount afterward only reflects the LAST
+        # page, not the true total. page_size=len(rows) forces a single page
+        # so rowcount is accurate for callers that already chunk large loads
+        # (as migrate.py does) before calling this function.
+        execute_values(cur, placeholder, rows, page_size=len(rows))
         count = cur.rowcount
 
     logger.info(f"Inserted {count} rows into {table_name}")
@@ -162,7 +192,14 @@ def upsert_dataframe(
     if df.empty:
         return 0
 
+    _validate_identifier(table_name)
     columns = list(df.columns)
+    for c in columns:
+        _validate_identifier(c)
+    for c in conflict_columns:
+        _validate_identifier(c)
+    for c in update_columns:
+        _validate_identifier(c)
     col_str = ", ".join(columns)
     conflict_str = ", ".join(conflict_columns)
     update_str = ", ".join(f"{c} = EXCLUDED.{c}" for c in update_columns)
@@ -175,7 +212,9 @@ def upsert_dataframe(
     rows = [tuple(row) for row in df.itertuples(index=False, name=None)]
 
     with conn.cursor() as cur:
-        execute_values(cur, sql, rows)
+        # See insert_dataframe: force a single execute_values page so
+        # cur.rowcount reflects the true total, not just the last page.
+        execute_values(cur, sql, rows, page_size=len(rows))
         count = cur.rowcount
 
     logger.info(f"Upserted {count} rows into {table_name}")
@@ -183,12 +222,14 @@ def upsert_dataframe(
 
 def table_row_count(table_name: str, config: Optional[DatabaseConfig] = None) -> int:
     """Returns the number of rows in a table."""
+    _validate_identifier(table_name)
     df = execute_query(f"SELECT COUNT(*) AS n FROM {table_name}", config=config)
     return int(df["n"].iloc[0])
 
 
 def truncate_table(table_name: str, conn) -> None:
     """Truncates a table. Use with care — irreversible."""
+    _validate_identifier(table_name)
     with conn.cursor() as cur:
         cur.execute(f"TRUNCATE TABLE {table_name} RESTART IDENTITY CASCADE")
     logger.warning(f"Truncated {table_name}")

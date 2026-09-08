@@ -10,6 +10,7 @@ makes them individually testable and easy to swap or extend.
 
 import pandas as pd
 import numpy as np
+from scipy import stats
 from typing import List, Optional
 import logging
 
@@ -272,7 +273,6 @@ def detect_trend_anomalies(
         return []  # No trend
 
     # Two-tailed p-value from standard normal distribution
-    from scipy import stats
     p_value = 2 * (1 - stats.norm.cdf(abs(z_mk)))
 
     if p_value > significance_level:

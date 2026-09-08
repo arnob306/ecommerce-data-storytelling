@@ -34,9 +34,6 @@ ROOT = Path(__file__).resolve().parents[1]
 def _log_step(step: str, n: int) -> None:
     logger.info(f"  ✓  {step:<35} {n:>7,} rows")
 
-
-# ── raw_transactions ──────────────────────────────────────────────────────────
-
 def migrate_raw_transactions(conn, reset: bool = False) -> int:
     csv_path = ROOT / "data" / "raw" / "UK retail data.csv"
     if not csv_path.exists():
@@ -62,8 +59,12 @@ def migrate_raw_transactions(conn, reset: bool = False) -> int:
     cols = ["invoice_no", "stock_code", "description", "quantity",
             "invoice_date", "unit_price", "customer_id", "country", "loaded_at"]
 
-    if reset:
-        truncate_table("raw_transactions", conn)
+    # raw_transactions has no safe natural key - a real invoice can
+    # legitimately repeat the same stock_code as separate line items
+    # (9,694 such groups exist in this dataset), so ON CONFLICT DO NOTHING
+    # can never actually deduplicate it. It's meant to fully mirror the CSV,
+    # so always truncate first rather than risk doubling it on every re-run.
+    truncate_table("raw_transactions", conn)
 
     batch_size = 10_000
     total = 0
@@ -75,9 +76,6 @@ def migrate_raw_transactions(conn, reset: bool = False) -> int:
 
     _log_step("raw_transactions", total)
     return total
-
-
-# ── kpi_results ───────────────────────────────────────────────────────────────
 
 def migrate_kpi_results(conn, reset: bool = False) -> int:
     csv_path = ROOT / "data" / "processed" / "kpi_results.csv"
@@ -120,9 +118,6 @@ def migrate_kpi_results(conn, reset: bool = False) -> int:
     _log_step("kpi_results", n)
     return n
 
-
-# ── anomalies ─────────────────────────────────────────────────────────────────
-
 def migrate_anomalies(conn, reset: bool = False) -> int:
     csv_path = ROOT / "data" / "insights" / "anomalies.csv"
     if not csv_path.exists():
@@ -142,7 +137,7 @@ def migrate_anomalies(conn, reset: bool = False) -> int:
         df = df.rename(columns={date_col: "anomaly_date"})
     df["anomaly_date"] = pd.to_datetime(df["anomaly_date"])
 
-    # Deduplicate — CSV has one row per detection method, keep highest confidence
+    
     if "confidence" in df.columns:
         df = df.sort_values("confidence", ascending=False)
     df = df.drop_duplicates(subset=["kpi_name", "anomaly_date"], keep="first")
@@ -271,9 +266,13 @@ def migrate_root_causes(conn, reset: bool = False) -> int:
                 added = True
 
         if not added:
+            # segment_rank=0 is a sentinel for "no driver found" (rather than
+            # NULL) so UNIQUE(anomaly_id, segment_rank) can actually prevent
+            # duplicate no-driver rows on re-run - Postgres treats NULL as
+            # distinct from NULL, so a NULL rank would never conflict.
             insert_rows.append((
                 anomaly_id, kpi_name, anom_date, status,
-                None, None, None, None, analysed,
+                None, None, None, 0, analysed,
             ))
 
     logger.info(f"  prepared {len(insert_rows)} rows for insert")
@@ -292,7 +291,10 @@ def migrate_root_causes(conn, reset: bool = False) -> int:
 
     # Row-by-row insert with error isolation
     cols = "anomaly_id, kpi_name, anomaly_date, status, dimension, segment_value, contribution_pct, segment_rank, analysed_at"
-    sql  = f"INSERT INTO root_causes ({cols}) VALUES %s ON CONFLICT DO NOTHING"
+    sql  = (
+        f"INSERT INTO root_causes ({cols}) VALUES %s "
+        "ON CONFLICT (anomaly_id, segment_rank) DO NOTHING"
+    )
 
     from psycopg2.extras import execute_values
     failed = 0
@@ -303,18 +305,24 @@ def migrate_root_causes(conn, reset: bool = False) -> int:
             inserted = cur.rowcount
     except Exception as bulk_err:
         logger.warning(f"  bulk insert failed ({bulk_err}), switching to row-by-row")
-        # Row by row to find the bad value
-        with conn.cursor() as cur:
-            for idx, r in enumerate(insert_rows):
-                try:
+        # The failed bulk insert left the transaction aborted; roll back first
+        # or every row below would fail with "current transaction is aborted".
+        conn.rollback()
+        # Commit each row individually so a later row's failure/rollback can't
+        # erase rows that already succeeded in this loop.
+        inserted = 0
+        for idx, r in enumerate(insert_rows):
+            try:
+                with conn.cursor() as cur:
                     execute_values(cur, sql, [r])
-                    inserted += 1
-                except Exception as row_err:
-                    logger.error(f"  row {idx} failed: {row_err}")
-                    logger.error(f"  bad row: {r}")
-                    logger.error(f"  bad types: {[type(v).__name__ for v in r]}")
-                    failed += 1
-                    conn.rollback()
+                conn.commit()
+                inserted += 1
+            except Exception as row_err:
+                conn.rollback()
+                logger.error(f"  row {idx} failed: {row_err}")
+                logger.error(f"  bad row: {r}")
+                logger.error(f"  bad types: {[type(v).__name__ for v in r]}")
+                failed += 1
 
     logger.info(f"  inserted {inserted}, failed {failed}")
     _log_step("root_causes", inserted)
@@ -364,8 +372,11 @@ def migrate_llm_calls(conn, reset: bool = False) -> int:
             "input_tokens", "output_tokens", "estimated_cost_usd",
             "latency_ms", "success", "quality_flags", "loaded_at"]
 
-    if reset:
-        truncate_table("llm_calls", conn)
+    # llm_calls.jsonl is the append-only source of truth and this table has
+    # no reliable natural key (timestamp granularity isn't guaranteed unique),
+    # so always truncate and fully reload rather than risk re-appending the
+    # entire call history on every run.
+    truncate_table("llm_calls", conn)
 
     n = insert_dataframe(df[cols], "llm_calls", conn, conflict_action="DO NOTHING")
     _log_step("llm_calls", n)
