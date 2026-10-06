@@ -1,18 +1,11 @@
 # core data processing
 pandas>=2.0.0
 numpy>=1.24.0
-
-# Statistical analysis
-scipy>=1.10.0
-statsmodels>=0.14.0
-scikit-learn>=1.3.0
+openpyxl>=3.1.0
 
 # Configuration
 pyyaml>=6.0
-
-# Visualisation (for future)
-plotly>=5.14.0
-streamlit>=1.22.0
+python-dotenv>=1.0.0
 
 # Development
 pytest>=7.3.0
@@ -24,9 +17,3 @@ mypy>=1.3.0
 # Type stubs
 pandas-stubs>=2.0.0
 types-PyYAML>=6.0.0
-
-groq>=0.4.0
-python-dotenv>=1.0.0
-pyarrow>=12.0.0
-
-

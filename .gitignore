@@ -20,6 +20,7 @@ ENV/
 *.swo
 
 # OS
+*.stackdump
 .DS_Store
 Thumbs.db
 .history/
@@ -36,11 +37,15 @@ htmlcov/
 # Runtime logs
 logs/
 
-# Note: We're committing the CSV for portfolio purposes
-# data/raw/*.csv
 data/processed/
 data/cache/
 data/vector_store/
+
+# Real business data and anything derived from it. NEVER commit.
+data/private/
+reports/private/
+*Boutique_Sales*.xlsx
+!data/synthetic/*.xlsx
 
 # Environment variables
 .env

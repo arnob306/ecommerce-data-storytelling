@@ -1,0 +1,30 @@
+# Upcoming festival windows used to scale reorder advice.
+#
+# Names must match the labels used in the 'Festival / Occasion' column of the
+# Sales sheet, so the uplift learned from past sales can be applied.
+#
+# VERIFY THESE DATES. Several festivals follow the lunar calendar and move
+# every year; the dates below are best estimates. A window runs from the
+# start of the pre-festival shopping rush to the festival itself.
+festivals:
+  - name: Durga Puja
+    start: 2026-10-10
+    end: 2026-10-21
+  - name: Diwali / Kali Puja
+    start: 2026-11-01
+    end: 2026-11-09
+  - name: Christmas
+    start: 2026-12-12
+    end: 2026-12-25
+  - name: Saraswati Puja
+    start: 2027-02-01
+    end: 2027-02-11
+  - name: Eid
+    start: 2027-03-03
+    end: 2027-03-11
+  - name: Pohela Boishakh
+    start: 2027-04-07
+    end: 2027-04-15
+  - name: Eid
+    start: 2027-05-10
+    end: 2027-05-17
