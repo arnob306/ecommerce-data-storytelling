@@ -15,14 +15,16 @@ import shutil
 import sys
 import zipfile
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 import pandas as pd
 from dotenv import load_dotenv
 
 from src.adapters.boutique_xlsx import SchemaError, load_workbook_data
 from src.metrics.calendar import DEFAULT_CALENDAR_PATH, load_calendar
+from src.metrics.trends import weekly_series
 from src.privacy import PrivacyError, get_salt
+from src.reports.dashboard import WEEKS_SHOWN, render_dashboard
 from src.reports.delivery import (
     DeliveryError,
     EmailSettings,
@@ -67,6 +69,8 @@ def _parse_args(argv) -> argparse.Namespace:
     parser.add_argument('--file', type=Path, help='use this workbook')
     parser.add_argument('--send', action='store_true',
                         help='email the report when the data is trusted')
+    parser.add_argument('--dashboard', action='store_true',
+                        help='also write a one-page dashboard')
     parser.add_argument('--private-root', type=Path, default=DEFAULT_PRIVATE_ROOT)
     parser.add_argument('--demo-output', type=Path, default=DEFAULT_DEMO_OUTPUT)
     parser.add_argument('--today', help='override today (YYYY-MM-DD)')
@@ -105,6 +109,20 @@ def _write_outputs(out_dir: Path, report) -> Path:
     return html_path
 
 
+def _dashboard_page(report, sales) -> Tuple[str, str]:
+    """The dashboard's file name and HTML."""
+    series = weekly_series(sales, report.data_through, WEEKS_SHOWN)
+    name = f'dashboard_{report.data_through:%Y-%m-%d}.html'
+    return name, render_dashboard(report, series)
+
+
+def _write_dashboard(out_dir: Path, report, sales) -> Path:
+    name, page = _dashboard_page(report, sales)
+    path = out_dir / name
+    path.write_text(page, encoding='utf-8')
+    return path
+
+
 def _free_name(path: Path) -> Path:
     """``path``, or ``path`` with a counter if that name is already taken."""
     candidate, counter = path, 2
@@ -136,11 +154,28 @@ def _load(workbook: Path, salt: str):
         raise InputError(str(exc)) from None
 
 
-def _email(report, sender) -> None:
+def _email(report, sales, sender) -> None:
     settings = EmailSettings.from_env()
     message = build_message(subject(report), render_text(report),
-                            render_html(report), settings)
+                            render_html(report), settings,
+                            attachments=(_dashboard_page(report, sales),))
     sender(settings, message)
+
+
+def _build_report(data, today):
+    validation = validate_import(data, as_of=today)
+    _say(validation.to_text())
+    calendar = (load_calendar(DEFAULT_CALENDAR_PATH)
+                if DEFAULT_CALENDAR_PATH.exists() else [])
+    return build_weekly_report(data, validation, today=today, calendar=calendar)
+
+
+def _write_all(args, report, sales) -> None:
+    out_dir = (args.private_root / 'output' if args.profile == 'private'
+               else args.demo_output)
+    _say(f'Report written to {_write_outputs(out_dir, report)}')
+    if args.dashboard:
+        _say(f'Dashboard written to {_write_dashboard(out_dir, report, sales)}')
 
 
 def main(argv=None, *, sender=send_email, env_file: Optional[str] = '.env') -> int:
@@ -169,20 +204,15 @@ def main(argv=None, *, sender=send_email, env_file: Optional[str] = '.env') -> i
         _say(f'Stock template written to {path}')
         return EXIT_OK
 
-    validation = validate_import(data, as_of=today)
-    _say(validation.to_text())
-    calendar = load_calendar(DEFAULT_CALENDAR_PATH) if DEFAULT_CALENDAR_PATH.exists() else []
-    report = build_weekly_report(data, validation, today=today, calendar=calendar)
-    out_dir = (args.private_root / 'output' if args.profile == 'private'
-               else args.demo_output)
-    _say(f'Report written to {_write_outputs(out_dir, report)}')
+    report = _build_report(data, today)
+    _write_all(args, report, data.sales)
 
     if not report.trusted:
         _say('The data has problems, so the report was not emailed or archived.')
         return EXIT_UNTRUSTED
     if args.send:
         try:
-            _email(report, sender)
+            _email(report, data.sales, sender)
         except DeliveryError as exc:
             _say(f'Cannot send the email: {exc}')
             return EXIT_DELIVERY

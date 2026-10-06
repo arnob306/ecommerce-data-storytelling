@@ -204,7 +204,7 @@ def build_weekly_report(
 
 # --- wording ---------------------------------------------------------------
 
-def _money(value: float) -> str:
+def money(value: float) -> str:
     sign = '-' if value < 0 else ''
     return f'{sign}{CURRENCY}{abs(value):,.0f}'
 
@@ -214,30 +214,30 @@ def _compare(now: float, before: float, label: str) -> str:
     if round(abs(gap)) == 0:
         return f'the same as {label}'
     direction = 'more' if gap > 0 else 'less'
-    return f'{_money(abs(gap))} {direction} than {label}'
+    return f'{money(abs(gap))} {direction} than {label}'
 
 
 def _this_week_text(r: WeeklyReport) -> str:
     text = (
-        f'You sold {_money(r.sales_this_week)} across {r.sales_count_this_week} '
+        f'You sold {money(r.sales_this_week)} across {r.sales_count_this_week} '
         f'sales in the last 7 days ({r.week_start:%d %b} to {r.week_end:%d %b}).'
     )
     if r.usual_week_sales is not None:
-        usual = f'a usual week (about {_money(r.usual_week_sales)})'
+        usual = f'a usual week (about {money(r.usual_week_sales)})'
         text += f' That is {_compare(r.sales_this_week, r.usual_week_sales, usual)}.'
     if r.sales_last_year:
         text += (
-            f' The same week last year was {_money(r.sales_last_year)}.'
+            f' The same week last year was {money(r.sales_last_year)}.'
             ' Single weeks vary a lot in a small shop, so look at the trend.'
         )
     if r.profit_this_week is not None:
-        text += f' Estimated profit: {_money(r.profit_this_week)}.'
+        text += f' Estimated profit: {money(r.profit_this_week)}.'
     if r.refunds_this_week:
         text += f' Refunds: {r.refunds_this_week}.'
     return text
 
 
-def _reorder_bullet(line: ReorderLine) -> str:
+def reorder_bullet(line: ReorderLine) -> str:
     stock = f'{line.stock_now} left'
     if line.on_order:
         stock += f', {line.on_order} on order'
@@ -253,9 +253,9 @@ def _reorder_bullet(line: ReorderLine) -> str:
     return text
 
 
-def _money_bullet(line: MoneyLine) -> str:
+def money_bullet(line: MoneyLine) -> str:
     margin = f', {line.margin * 100:.0f}% margin' if line.margin is not None else ''
-    return f'{line.product}: {_money(line.profit)} profit{margin}, {line.units_sold} sold.'
+    return f'{line.product}: {money(line.profit)} profit{margin}, {line.units_sold} sold.'
 
 
 def _sections(r: WeeklyReport) -> list:
@@ -267,7 +267,7 @@ def _sections(r: WeeklyReport) -> list:
     elif r.reorder_status == 'nothing':
         reorder = ('Nothing needs ordering right now.', ())
     else:
-        reorder = (None, tuple(_reorder_bullet(l) for l in r.reorder))
+        reorder = (None, tuple(reorder_bullet(l) for l in r.reorder))
     money_intro = None
     if r.overall_margin is not None:
         money_intro = f'Overall margin over the last 12 months: {r.overall_margin * 100:.0f}%.'
@@ -279,12 +279,12 @@ def _sections(r: WeeklyReport) -> list:
         sections.append(('Coming up', None, r.coming_up))
     sections.append((
         "What's making money (last 12 months)", money_intro,
-        tuple(_money_bullet(l) for l in r.top_earners),
+        tuple(money_bullet(l) for l in r.top_earners),
     ))
     if r.small_earners:
         sections.append((
             'Small earners', 'These made the least profit in the last 12 months:',
-            tuple(_money_bullet(l) for l in r.small_earners),
+            tuple(money_bullet(l) for l in r.small_earners),
         ))
     if r.data_notes:
         sections.append(('Things to check in the data', None, r.data_notes))

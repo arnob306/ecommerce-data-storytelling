@@ -11,7 +11,7 @@ import smtplib
 import ssl
 from dataclasses import dataclass, field
 from email.message import EmailMessage
-from typing import Mapping, Optional
+from typing import Mapping, Optional, Sequence, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -52,15 +52,25 @@ class EmailSettings:
 
 
 def build_message(
-    subject: str, text: str, html: str, settings: EmailSettings
+    subject: str,
+    text: str,
+    html: str,
+    settings: EmailSettings,
+    attachments: Sequence[Tuple[str, str]] = (),
 ) -> EmailMessage:
-    """A multipart email with plain-text and HTML versions."""
+    """
+    A multipart email with plain-text and HTML versions.
+
+    ``attachments`` are (filename, html content) pairs added as HTML files.
+    """
     message = EmailMessage()
     message['Subject'] = subject
     message['From'] = settings.user
     message['To'] = settings.recipient
     message.set_content(text)
     message.add_alternative(html, subtype='html')
+    for filename, content in attachments:
+        message.add_attachment(content, subtype='html', filename=filename)
     return message
 
 

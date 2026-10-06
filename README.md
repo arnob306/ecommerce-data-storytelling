@@ -46,6 +46,23 @@ The run prints an import check, writes the report to `data/private/output/`,
 and moves the workbook to `data/private/archive/`. If the data has critical
 problems the report is marked "not trusted", and it is never emailed or archived.
 
+Add `--dashboard` to also write `dashboard_<date>.html`, a one-page view for a
+phone: weekly sales chart, reorder advice, and profit by product. It is a single
+file with no scripts or links, built from the same figures as the email, so the
+two cannot disagree. With `--send` the dashboard is attached to the email
+automatically, so she can open it on her phone.
+
+To run it every week on Windows, once the `.env` is filled in, create a
+scheduled task (change the folder to wherever the repo lives):
+
+```
+schtasks /Create /SC WEEKLY /D MON /ST 08:00 /TN "Boutique weekly report" ^
+  /TR "cmd /c cd /d C:\path\to\ecommerce-data-storytelling && python -m src.run --profile private --send"
+```
+
+If no new workbook is in `data/private/inbox/` that morning, the run stops
+with a clear message (exit code 2) and sends nothing.
+
 Exit codes: `0` ok, `1` data not trusted, `2` setup or input problem, `3` email failed.
 
 ### Workbook layout
