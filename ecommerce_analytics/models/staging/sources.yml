@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: public
+    database: ecommerce_analytics
+    schema: public
+    tables:
+      - name: raw_transactions
+        description: "Raw UK retail transactions loaded by migrate.py"
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique
+          - name: invoice_no
+            tests:
+              - not_null
+          - name: quantity
+            tests:
+              - not_null
+          - name: unit_price
+            tests:
+              - not_null
+      - name: anomalies
+        description: "Detected anomalies from Python pipeline"
+      - name: root_causes
+        description: "Root cause analysis results"

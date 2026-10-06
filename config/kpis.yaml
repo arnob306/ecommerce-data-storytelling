@@ -1,0 +1,232 @@
+version: "1.0.0"
+last_updated: "2026-01-05"
+
+kpis:
+  total_revenue:
+    formula: "sum(Quantity * UnitPrice)"
+    owner: "Finance"
+    cadence: "daily"
+    aggregation_level: "transaction"
+    description: "Total transaction value across all orders"
+    business_context: "Primary health metric for business performance"
+    thresholds:
+      anomaly_sensitivity: 0.05
+      critical_drop: 0.15
+    dimensions:
+      - Country
+      - ProductCategory
+      - CustomerSegment
+
+  order_count:
+    formula: "count(distinct InvoiceNo)"
+    owner: "Operations"
+    cadence: "daily"
+    aggregation_level: "transaction"
+    description: "Total number of completed transactions"
+    business_context: "Volume indicator for operational capacity"
+    thresholds:
+      anomaly_sensitivity: 0.07
+      critical_drop: 0.20
+    dimensions:
+      - Country
+      - DayOfWeek
+      - HourOfDay
+
+  units_sold:
+    formula: "sum(Quantity)"
+    owner: "Operations"
+    cadence: "daily"
+    aggregation_level: "product"
+    description: "Total units sold across all products"
+    business_context: "Inventory movement and demand signal"
+    thresholds:
+      anomaly_sensitivity: 0.08
+    dimensions:
+      - StockCode
+      - ProductCategory
+
+  active_customers:
+    formula: "count(distinct CustomerID)"
+    owner: "Growth"
+    cadence: "daily"
+    aggregation_level: "customer"
+    description: "Unique customers who made purchases in period"
+    business_context: "Customer base engagement level"
+    thresholds:
+      anomaly_sensitivity: 0.06
+      critical_drop: 0.15
+    dimensions:
+      - Country
+      - CustomerType
+
+  revenue_per_order:
+    formula: "total_revenue / order_count"
+    owner: "Product"
+    cadence: "daily"
+    aggregation_level: "transaction"
+    description: "Average basket value per transaction"
+    business_context: "Indicates upsell/cross-sell effectiveness"
+    thresholds:
+      anomaly_sensitivity: 0.08
+      critical_drop: 0.20
+    dimensions:
+      - Country
+      - DayOfWeek
+
+  revenue_per_customer:
+    formula: "total_revenue / active_customers"
+    owner: "Product"
+    cadence: "weekly"
+    aggregation_level: "customer"
+    description: "Revenue per active customer in period"
+    business_context: "Customer monetization effectiveness"
+    thresholds:
+      anomaly_sensitivity: 0.10
+    dimensions:
+      - CustomerTier
+      - AcquisitionChannel
+
+  items_per_order:
+    formula: "sum(Quantity) / order_count"
+    owner: "Product"
+    cadence: "daily"
+    aggregation_level: "transaction"
+    description: "Average number of items per order"
+    business_context: "Basket composition and bundling effectiveness"
+    thresholds:
+      anomaly_sensitivity: 0.10
+    dimensions:
+      - Country
+      - CustomerSegment
+
+  avg_unit_price:
+    formula: "total_revenue / units_sold"
+    owner: "Pricing"
+    cadence: "weekly"
+    aggregation_level: "product"
+    description: "Average price point across all products"
+    business_context: "Pricing mix and discount impact"
+    thresholds:
+      anomaly_sensitivity: 0.08
+    dimensions:
+      - ProductCategory
+      - Country
+
+  repeat_customer_rate:
+    formula: "count(distinct CustomerID with orders > 1) / active_customers"
+    owner: "Retention"
+    cadence: "weekly"
+    aggregation_level: "customer"
+    description: "Percentage of customers making multiple purchases"
+    business_context: "Customer retention and loyalty indicator"
+    thresholds:
+      anomaly_sensitivity: 0.10
+    dimensions:
+      - Country
+      - AcquisitionCohort
+
+  new_customers:
+    formula: "count(distinct CustomerID with first_order_date in period)"
+    owner: "Growth"
+    cadence: "weekly"
+    aggregation_level: "customer"
+    description: "New customers acquired in period"
+    business_context: "Customer acquisition effectiveness"
+    thresholds:
+      anomaly_sensitivity: 0.15
+    dimensions:
+      - Country
+      - AcquisitionChannel
+
+  product_revenue_concentration:
+    formula: "revenue_top_20_products / total_revenue"
+    owner: "Product"
+    cadence: "weekly"
+    aggregation_level: "product"
+    description: "Percentage of revenue from top 20 products"
+    business_context: "Revenue diversification and dependency risk"
+    thresholds:
+      anomaly_sensitivity: 0.05
+    dimensions:
+      - ProductCategory
+
+  product_return_rate:
+    formula: "count(InvoiceNo with Quantity < 0) / order_count"
+    owner: "Operations"
+    cadence: "weekly"
+    aggregation_level: "transaction"
+    description: "Percentage of orders that are returns/cancellations"
+    business_context: "Product quality and satisfaction proxy"
+    thresholds:
+      anomaly_sensitivity: 0.10
+      critical_spike: 0.15
+    dimensions:
+      - StockCode
+      - Country
+
+  revenue_by_country:
+    formula: "sum(Quantity * UnitPrice)"
+    owner: "International"
+    cadence: "weekly"
+    aggregation_level: "geography"
+    description: "Revenue breakdown by customer country"
+    business_context: "Geographic performance and expansion opportunities"
+    thresholds:
+      anomaly_sensitivity: 0.12
+    dimensions:
+      - Country
+
+  international_revenue_share:
+    formula: "sum(revenue where Country != 'United Kingdom') / total_revenue"
+    owner: "International"
+    cadence: "weekly"
+    aggregation_level: "geography"
+    description: "Percentage of revenue from non-UK customers"
+    business_context: "International expansion progress"
+    thresholds:
+      anomaly_sensitivity: 0.08
+    dimensions:
+      - Region
+
+  weekend_revenue_share:
+    formula: "sum(revenue where DayOfWeek in ['Saturday', 'Sunday']) / total_revenue"
+    owner: "Operations"
+    cadence: "weekly"
+    aggregation_level: "temporal"
+    description: "Percentage of weekly revenue from weekends"
+    business_context: "Shopping behavior patterns and staffing needs"
+    thresholds:
+      anomaly_sensitivity: 0.10
+
+  peak_hour_concentration:
+    formula: "revenue_in_top_3_hours / total_revenue"
+    owner: "Operations"
+    cadence: "daily"
+    aggregation_level: "temporal"
+    description: "Revenue concentration in peak hours"
+    business_context: "Operational capacity planning"
+    thresholds:
+      anomaly_sensitivity: 0.08
+
+metadata:
+  data_source: "UK Retail Transactions Dataset"
+  refresh_frequency: "daily"
+  data_retention: "2 years"
+  quality_threshold: 0.95
+
+  governance:
+    approval_required: true
+    version_control: true
+    audit_trail: true
+
+  stakeholders:
+    - name: "Finance Team"
+      kpis: ["total_revenue", "revenue_per_order", "revenue_per_customer"]
+    - name: "Operations Team"
+      kpis: ["order_count", "units_sold", "product_return_rate"]
+    - name: "Growth Team"
+      kpis: ["active_customers", "new_customers", "repeat_customer_rate"]
+    - name: "Product Team"
+      kpis: ["items_per_order", "product_revenue_concentration", "avg_unit_price"]
+    - name: "International Team"
+      kpis: ["revenue_by_country", "international_revenue_share"]

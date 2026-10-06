@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: ecommerce_analytics_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ecommerce_analytics
+      POSTGRES_USER: analytics_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-analytics_dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U analytics_user -d ecommerce_analytics"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    name: ecommerce_analytics_pgdata
