@@ -3,6 +3,8 @@ name: Python CI
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
 
 jobs:
   python-test:
@@ -18,7 +20,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pytest pyyaml pandas numpy
+          pip install pytest pytest-cov pyyaml pandas numpy openpyxl python-dotenv
 
       - name: Run tests
-        run: pytest tests/ -v
+        run: >
+          pytest tests/ -v
+          --cov=src.adapters --cov=src.metrics --cov=src.reports
+          --cov=src.validation --cov=src.privacy --cov=src.run
+          --cov=src.stock_template --cov=src.schema
+          --cov-fail-under=80
