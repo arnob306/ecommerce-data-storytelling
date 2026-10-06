@@ -10,6 +10,7 @@ PRIVATE_PATHS = [
     'data/private/inbox/Boutique_Sales.xlsx',
     'data/private/archive/2026-10-06_sales.xlsx',
     'data/private/output/weekly_report.html',
+    'data/private/output/dashboard_2026-10-06.html',
 ]
 
 

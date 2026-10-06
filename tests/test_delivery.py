@@ -113,3 +113,19 @@ def test_network_failures_become_delivery_errors_without_the_password(settings):
     with pytest.raises(DeliveryError) as info:
         send_email(settings, message, smtp_factory=Broken)
     assert 'app-password-123' not in str(info.value)
+
+
+def test_attachments_are_added_and_the_body_stays_readable(settings):
+    message = build_message(
+        'Subject', 'plain body', '<p>html body</p>', settings,
+        attachments=(('dash.html', '<p>dashboard</p>'),))
+    files = list(message.iter_attachments())
+    assert [f.get_filename() for f in files] == ['dash.html']
+    assert files[0].get_content_type() == 'text/html'
+    assert '<p>dashboard</p>' in files[0].get_content()
+    assert message.get_body(preferencelist=('plain',)).get_content().strip() == 'plain body'
+
+
+def test_a_message_without_attachments_has_none(settings):
+    message = build_message('Subject', 'plain', '<p>html</p>', settings)
+    assert list(message.iter_attachments()) == []

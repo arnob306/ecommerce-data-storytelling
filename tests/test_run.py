@@ -169,3 +169,50 @@ def test_custom_file_with_synthetic_profile_needs_its_own_output_folder(
         workbook_path, capsys):
     assert _run('--profile', 'synthetic', '--file', str(workbook_path)) == 2
     assert '--demo-output' in capsys.readouterr().out
+
+
+def test_dashboard_is_only_written_when_asked(workbook_path, tmp_path):
+    out = tmp_path / 'demo'
+    assert _run('--profile', 'synthetic', '--file', str(workbook_path),
+                '--demo-output', str(out)) == 0
+    assert not list(out.glob('dashboard_*.html'))
+
+
+def test_dashboard_flag_writes_a_dashboard_next_to_the_report(
+        workbook_path, tmp_path):
+    out = tmp_path / 'demo'
+    assert _run('--profile', 'synthetic', '--file', str(workbook_path),
+                '--demo-output', str(out), '--dashboard') == 0
+    page = next(out.glob('dashboard_*.html')).read_text(encoding='utf-8')
+    assert 'Boutique dashboard' in page
+    assert list(out.glob('weekly_*.html'))
+
+
+def test_private_dashboard_goes_to_the_private_output_folder(
+        private_root, inbox_file, with_salt):
+    assert _private(private_root, '--dashboard') == 0
+    assert list((private_root / 'output').glob('dashboard_*.html'))
+
+
+def _send_with_dashboard(private_root, monkeypatch):
+    for key, value in SMTP_ENV.items():
+        monkeypatch.setenv(key, value)
+    sender = Recorder()
+    assert _private(private_root, '--send', sender=sender) == 0
+    return list(sender.sent[0].iter_attachments())
+
+
+def test_send_attaches_the_dashboard(
+        private_root, inbox_file, with_salt, monkeypatch):
+    files = _send_with_dashboard(private_root, monkeypatch)
+    assert len(files) == 1
+    assert files[0].get_filename().startswith('dashboard_')
+    assert files[0].get_filename().endswith('.html')
+    assert 'Boutique dashboard' in files[0].get_content()
+
+
+def test_the_attached_dashboard_has_no_customer_names(
+        private_root, inbox_file, with_salt, monkeypatch, workbook_path):
+    names = set(pd.read_excel(workbook_path, sheet_name='Sales')['Customer'].dropna())
+    attached = _send_with_dashboard(private_root, monkeypatch)[0].get_content()
+    assert not any(name in attached for name in names)
